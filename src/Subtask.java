@@ -1,4 +1,4 @@
-public class Subtask extends Task{
+public class Subtask extends Objective {
 
     private Epic epic;
 
@@ -10,5 +10,15 @@ public class Subtask extends Task{
         super(name, description);
         this.epic = epic;
         this.taskType = TaskType.SUBTASK;
+    }
+
+    @Override
+    public String toString() {
+        return "Subtask{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", epic='" + epic.getName() + '\'' +
+                ", status=" + status +
+                '}';
     }
 }
