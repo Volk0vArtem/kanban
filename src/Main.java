@@ -8,30 +8,30 @@ public class Main {
 
         manager.addObjective(new Epic("Переезд", "Переехать в новую квартиру"), TaskType.EPIC);
         manager.addObjective(new Subtask("Упаковать вещи", "Собрать вещи в коробки",
-                (Epic) manager.getById(0, TaskType.EPIC)), TaskType.SUBTASK);
+                (Epic) manager.getById(1, TaskType.EPIC)), TaskType.SUBTASK);
         manager.addObjective(new Subtask("Перевезти вещи", "Заказать доставку вещей в новую квартиру",
-                (Epic) manager.getById(0, TaskType.EPIC)), TaskType.SUBTASK);
+                (Epic) manager.getById(1, TaskType.EPIC)), TaskType.SUBTASK);
 
         manager.addObjective(new Epic("Купить ноутбук", "Купить новый ноутбук"),
                 TaskType.EPIC);
         manager.addObjective(new Subtask("Сходить в магазин электроники",
-                        "Прийти в магазин и выбрать ноутбук", (Epic) manager.getById(1, TaskType.EPIC)),
+                        "Прийти в магазин и выбрать ноутбук", (Epic) manager.getById(4, TaskType.EPIC)),
                 TaskType.SUBTASK);
 
         printAllObjectives(manager);
 
         System.out.println("\n------------------------\nИзменение статусов задач\n------------------------");
         manager.update(manager.getTasks().get(0).changeStatus(Status.IN_PROGRESS), 0);
-        manager.update(manager.getSubtasks().get(0).changeStatus(Status.IN_PROGRESS), 0);
-        manager.update(manager.getSubtasks().get(1).changeStatus(Status.DONE), 1);
-        manager.update(manager.getSubtasks().get(2).changeStatus(Status.DONE), 2);
+        manager.update(manager.getSubtasks().get(2).changeStatus(Status.IN_PROGRESS), 2);
+        manager.update(manager.getSubtasks().get(3).changeStatus(Status.DONE), 3);
+        manager.update(manager.getSubtasks().get(5).changeStatus(Status.DONE), 5);
 
         printAllObjectives(manager);
 
         System.out.println("\n---------------\nУдаление задач\n---------------");
-        manager.deleteById(1, TaskType.SUBTASK);
+        manager.deleteById(2, TaskType.SUBTASK);
         manager.clearTasks();
-        manager.deleteById(1, TaskType.EPIC);
+        manager.deleteById(4, TaskType.EPIC);
         printAllObjectives(manager);
     }
 

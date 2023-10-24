@@ -3,9 +3,12 @@ import java.util.HashMap;
 
 public class Manager {
 
+    /*
     private int taskId = 0;
     private int subtaskId = 0;
     private int epicId = 0;
+
+     */
 
     private HashMap<Integer, Task> tasks;
     private HashMap<Integer, Subtask> subtasks;
@@ -16,7 +19,7 @@ public class Manager {
         subtasks = new HashMap<>();
         epics = new HashMap<>();
     }
-
+/*
     public int getTaskId() {
         return taskId;
     }
@@ -28,6 +31,8 @@ public class Manager {
     public int getEpicId() {
         return epicId;
     }
+
+ */
 
     public HashMap<Integer, Task> getTasks() {
         return tasks;
@@ -60,21 +65,15 @@ public class Manager {
     public void addObjective(AbstractTask abstractTask, TaskType taskType) {
         switch (taskType) {
             case TASK:
-                abstractTask.setId(taskId);
-                tasks.put(taskId, (Task) abstractTask);
-                taskId++;
+                tasks.put(abstractTask.getId(), (Task) abstractTask);
                 break;
             case EPIC:
-                abstractTask.setId(epicId);
-                epics.put(epicId, (Epic) abstractTask);
-                epicId++;
+                epics.put(abstractTask.getId(), (Epic) abstractTask);
                 break;
             case SUBTASK:
-                abstractTask.setId(subtaskId);
                 Subtask subtask = (Subtask) abstractTask;
-                subtasks.put(subtaskId, subtask);
+                subtasks.put(subtask.getId(), subtask);
                 subtask.getEpic().addSubtask(subtask);
-                subtaskId++;
                 break;
             default:
                 throw new IllegalArgumentException("Неправильно введен тип задачи");

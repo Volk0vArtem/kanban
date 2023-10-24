@@ -19,6 +19,7 @@ public class Subtask extends AbstractTask {
                 ", description='" + description + '\'' +
                 ", epic='" + epic.getName() + '\'' +
                 ", status=" + status +
+                ", id=" + id +
                 '}';
     }
 }

@@ -6,7 +6,8 @@ public abstract class AbstractTask {
     protected String description;
     protected Status status;
     protected TaskType taskType;
-    int id;
+    protected int id;
+    private static int count;
 
     public int getId() {
         return id;
@@ -48,6 +49,11 @@ public abstract class AbstractTask {
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
+        this.id = generateId();
+    }
+
+    protected Integer generateId(){
+        return count++;
     }
 
     public AbstractTask changeStatus(Status status) {
@@ -62,6 +68,7 @@ public abstract class AbstractTask {
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
+                ", id=" + id +
                 '}';
     }
 

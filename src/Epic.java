@@ -26,6 +26,7 @@ public class Epic extends AbstractTask {
                 ", description='" + description + '\'' +
                 ", subtasks=" + subtasks +
                 ", status=" + status +
+                ", id=" + id +
                 '}';
     }
 }
