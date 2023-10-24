@@ -1,12 +1,8 @@
 package Tasks;
 
-import Tasks.AbstractTask;
-import Tasks.Subtask;
-
 import java.util.ArrayList;
 
 public class Epic extends AbstractTask {
-
 
     private ArrayList<Subtask> subtasks;
 
