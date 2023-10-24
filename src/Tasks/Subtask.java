@@ -1,3 +1,5 @@
+package Tasks;
+
 public class Subtask extends AbstractTask {
 
     private Epic epic;
@@ -14,7 +16,7 @@ public class Subtask extends AbstractTask {
 
     @Override
     public String toString() {
-        return "Subtask{" +
+        return "Tasks.Subtask{" +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", epic='" + epic.getName() + '\'' +

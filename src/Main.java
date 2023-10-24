@@ -1,3 +1,6 @@
+import Manager.Manager;
+import Tasks.*;
+
 public class Main {
 
     public static void main(String[] args) {

@@ -1,14 +1,11 @@
+package Manager;
+
+import Tasks.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Manager {
-
-    /*
-    private int taskId = 0;
-    private int subtaskId = 0;
-    private int epicId = 0;
-
-     */
 
     private HashMap<Integer, Task> tasks;
     private HashMap<Integer, Subtask> subtasks;
@@ -19,20 +16,6 @@ public class Manager {
         subtasks = new HashMap<>();
         epics = new HashMap<>();
     }
-/*
-    public int getTaskId() {
-        return taskId;
-    }
-
-    public int getSubtaskId() {
-        return subtaskId;
-    }
-
-    public int getEpicId() {
-        return epicId;
-    }
-
- */
 
     public HashMap<Integer, Task> getTasks() {
         return tasks;
@@ -177,9 +160,9 @@ public class Manager {
         int done = 0;
 
         for (Subtask subtask : epic.getSubtasks()) {
-            if (subtask.status == Status.IN_PROGRESS) {
+            if (subtask.getStatus() == Status.IN_PROGRESS) {
                 inProgress++;
-            } else if (subtask.status == Status.DONE) {
+            } else if (subtask.getStatus() == Status.DONE) {
                 done++;
             }
         }

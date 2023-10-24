@@ -1,3 +1,5 @@
+package Tasks;
+
 import java.util.Objects;
 
 public abstract class AbstractTask {
@@ -33,6 +35,10 @@ public abstract class AbstractTask {
         return status;
     }
 
+    public static int getCount() {
+        return count;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -52,7 +58,7 @@ public abstract class AbstractTask {
         this.id = generateId();
     }
 
-    protected Integer generateId(){
+    protected Integer generateId() {
         return count++;
     }
 
