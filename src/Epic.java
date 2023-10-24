@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Epic extends Objective {
+public class Epic extends AbstractTask {
 
 
     private ArrayList<Subtask> subtasks;

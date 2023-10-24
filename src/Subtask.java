@@ -1,4 +1,4 @@
-public class Subtask extends Objective {
+public class Subtask extends AbstractTask {
 
     private Epic epic;
 

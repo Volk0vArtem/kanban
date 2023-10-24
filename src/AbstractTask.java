@@ -1,6 +1,6 @@
 import java.util.Objects;
 
-public abstract class Objective {
+public abstract class AbstractTask {
 
     protected String name;
     protected String description;
@@ -44,14 +44,14 @@ public abstract class Objective {
         this.status = status;
     }
 
-    public Objective(String name, String description) {
+    public AbstractTask(String name, String description) {
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
     }
 
-    public Objective changeStatus(Status status) {
-        Objective newTask = this;
+    public AbstractTask changeStatus(Status status) {
+        AbstractTask newTask = this;
         newTask.setStatus(status);
         return newTask;
     }
@@ -69,8 +69,8 @@ public abstract class Objective {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Objective objective = (Objective) o;
-        return Objects.equals(name, objective.name) && Objects.equals(description, objective.description) && status == objective.status && taskType == objective.taskType;
+        AbstractTask abstractTask = (AbstractTask) o;
+        return Objects.equals(name, abstractTask.name) && Objects.equals(description, abstractTask.description) && status == abstractTask.status && taskType == abstractTask.taskType;
     }
 
     @Override

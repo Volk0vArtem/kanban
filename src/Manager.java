@@ -57,21 +57,21 @@ public class Manager {
         }
     }
 
-    public void addObjective(Objective objective, TaskType taskType) {
+    public void addObjective(AbstractTask abstractTask, TaskType taskType) {
         switch (taskType) {
             case TASK:
-                objective.setId(taskId);
-                tasks.put(taskId, (Task) objective);
+                abstractTask.setId(taskId);
+                tasks.put(taskId, (Task) abstractTask);
                 taskId++;
                 break;
             case EPIC:
-                objective.setId(epicId);
-                epics.put(epicId, (Epic) objective);
+                abstractTask.setId(epicId);
+                epics.put(epicId, (Epic) abstractTask);
                 epicId++;
                 break;
             case SUBTASK:
-                objective.setId(subtaskId);
-                Subtask subtask = (Subtask) objective;
+                abstractTask.setId(subtaskId);
+                Subtask subtask = (Subtask) abstractTask;
                 subtasks.put(subtaskId, subtask);
                 subtask.getEpic().addSubtask(subtask);
                 subtaskId++;
@@ -81,7 +81,7 @@ public class Manager {
         }
     }
 
-    public Objective getById(int id, TaskType type) {
+    public AbstractTask getById(int id, TaskType type) {
         switch (type) {
             case TASK:
                 return tasks.get(id);
@@ -95,58 +95,30 @@ public class Manager {
         }
     }
 
-//    private int getId(Objective objective) {
-//        switch (objective.getTaskType()) {
-//            case TASK:
-//                for (int id : tasks.keySet()) {
-//                    if (tasks.get(id).equals(objective)) {
-//                        return id;
-//                    }
-//                }
-//                break;
-//            case EPIC:
-//                for (int id : epics.keySet()) {
-//                    if (epics.get(id).equals(objective)) {
-//                        return id;
-//                    }
-//                }
-//                break;
-//            case SUBTASK:
-//                for (int id : subtasks.keySet()) {
-//                    if (subtasks.get(id).equals(objective)) {
-//                        return id;
-//                    }
-//                }
-//                break;
-//
-//        }
-//        return -1;
-//    }
-
-    public void update(Objective objective, int id) {
-        switch (objective.getTaskType()) {
+    public void update(AbstractTask abstractTask, int id) {
+        switch (abstractTask.getTaskType()) {
             case TASK:
                 if (!tasks.containsKey(id)) {
                     System.out.println("Задача не найдена");
                     return;
                 }
-                tasks.put(id, (Task) objective);
+                tasks.put(id, (Task) abstractTask);
                 break;
             case EPIC:
                 if (!epics.containsKey(id)) {
                     System.out.println("Эпик не найден");
                     return;
                 }
-                epics.put(id, (Epic) objective);
+                epics.put(id, (Epic) abstractTask);
                 break;
             case SUBTASK:
                 if (!subtasks.containsKey(id)) {
                     System.out.println("Подзадача не найдена");
                     return;
                 }
-                subtasks.put(id, (Subtask) objective);
-                Subtask subtask = (Subtask) objective;
-                checkStatus(subtask.getEpic().getId());
+                subtasks.put(id, (Subtask) abstractTask);
+                Subtask subtask = (Subtask) abstractTask;
+                checkEpicStatus(subtask.getEpic().getId());
                 break;
             default:
                 throw new IllegalArgumentException("Неправильно введен тип задачи");
@@ -184,7 +156,7 @@ public class Manager {
                 }
                 int epicId = subtasks.get(id).getEpic().getId();
                 subtasks.remove(id);
-                checkStatus(epicId);
+                checkEpicStatus(epicId);
                 break;
             default:
                 throw new IllegalArgumentException("Неправильно введен тип задачи");
@@ -200,7 +172,7 @@ public class Manager {
         return epic.getSubtasks();
     }
 
-    private void checkStatus(int id) {
+    private void checkEpicStatus(int id) {
         Epic epic = epics.get(id);
         int inProgress = 0;
         int done = 0;
