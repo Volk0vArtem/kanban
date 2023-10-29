@@ -1,4 +1,4 @@
-package Manager;
+package Managers;
 
 import Tasks.*;
 import java.util.ArrayList;
@@ -9,11 +9,13 @@ public class InMemoryTaskManager implements TaskManager{
     private HashMap<Integer, Task> tasks;
     private HashMap<Integer, Subtask> subtasks;
     private HashMap<Integer, Epic> epics;
+    private ArrayList<AbstractTask> history;
 
     public InMemoryTaskManager() {
         tasks = new HashMap<>();
         subtasks = new HashMap<>();
         epics = new HashMap<>();
+        history = new ArrayList<>();
     }
 
     @Override
@@ -66,10 +68,13 @@ public class InMemoryTaskManager implements TaskManager{
     public AbstractTask getById(int id, TaskType type) {
         switch (type) {
             case TASK:
+                addToHistory(tasks.get(id));
                 return tasks.get(id);
             case EPIC:
+                addToHistory(epics.get(id));
                 return epics.get(id);
             case SUBTASK:
+                addToHistory(subtasks.get(id));
                 Subtask subtask = subtasks.get(id);
                 return subtask;
             default:
@@ -152,6 +157,18 @@ public class InMemoryTaskManager implements TaskManager{
         }
         Epic epic = epics.get(epicId);
         return epic.getSubtasks();
+    }
+
+    @Override
+    public ArrayList<AbstractTask> getHistory() {
+        return history;
+    }
+
+    private void addToHistory(AbstractTask task){
+        history.add(task);
+        if (history.size() > 10){
+            history.remove(0);
+        }
     }
 
     private void checkEpicStatus(int id) {

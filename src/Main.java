@@ -1,4 +1,4 @@
-import Manager.InMemoryTaskManager;
+import Managers.InMemoryTaskManager;
 import Tasks.*;
 
 public class Main {
@@ -23,20 +23,32 @@ public class Main {
 
         printAllObjectives(inMemoryTaskManager);
 
+        System.out.println("\n ----history---- \n");
+        for (AbstractTask a : inMemoryTaskManager.getHistory()){
+            System.out.println(a);
+        }
+        System.out.println("\n ----history---- \n");
+
         System.out.println("\n------------------------\nИзменение статусов задач\n------------------------");
-        inMemoryTaskManager.update(inMemoryTaskManager.getTasks().get(0).changeStatus(Status.IN_PROGRESS), 0);
-        inMemoryTaskManager.update(inMemoryTaskManager.getSubtasks().get(2).changeStatus(Status.IN_PROGRESS), 2);
-        inMemoryTaskManager.update(inMemoryTaskManager.getSubtasks().get(3).changeStatus(Status.DONE), 3);
-        inMemoryTaskManager.update(inMemoryTaskManager.getSubtasks().get(5).changeStatus(Status.DONE), 5);
+        inMemoryTaskManager.update(inMemoryTaskManager.getById(0, TaskType.TASK).changeStatus(Status.IN_PROGRESS), 0);
+        inMemoryTaskManager.update(inMemoryTaskManager.getById(2, TaskType.SUBTASK).changeStatus(Status.IN_PROGRESS), 2);
+        inMemoryTaskManager.update(inMemoryTaskManager.getById(3, TaskType.SUBTASK).changeStatus(Status.DONE), 3);
+        inMemoryTaskManager.update(inMemoryTaskManager.getById(5, TaskType.SUBTASK).changeStatus(Status.DONE), 5);
 
         printAllObjectives(inMemoryTaskManager);
 
-        System.out.println("\n---------------\nУдаление задач\n---------------");
-        inMemoryTaskManager.deleteById(2, TaskType.SUBTASK);
-        inMemoryTaskManager.clearTasks();
-        inMemoryTaskManager.deleteById(4, TaskType.EPIC);
-        printAllObjectives(inMemoryTaskManager);
+
+
+
+        System.out.println("\n ----history---- \n");
+        for (AbstractTask a : inMemoryTaskManager.getHistory()){
+            System.out.println(a);
+        }
+        System.out.println("\n ----history---- \n");
+
     }
+
+
 
     public static void printAllObjectives(InMemoryTaskManager inMemoryTaskManager) {
         System.out.println("\nСписок задач:");
@@ -53,5 +65,9 @@ public class Main {
         for (Subtask subtask : inMemoryTaskManager.getSubtasks().values()) {
             System.out.println("\t" + subtask.toString());
         }
+
+
     }
+
+
 }

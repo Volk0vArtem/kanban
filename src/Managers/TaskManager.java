@@ -1,4 +1,4 @@
-package Manager;
+package Managers;
 
 import Tasks.*;
 
@@ -6,13 +6,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface TaskManager {
-    public HashMap<Integer, Task> getTasks();
+    HashMap<Integer, Task> getTasks();
 
-    public HashMap<Integer, Subtask> getSubtasks();
-    public HashMap<Integer, Epic> getEpics();
-    public void clearTasks();
-    public void clearEpics();
-    public void clearSubtasks();
+    HashMap<Integer, Subtask> getSubtasks();
+
+    HashMap<Integer, Epic> getEpics();
+
+    void clearTasks();
+
+    void clearEpics();
+
+    void clearSubtasks();
 
     void addObjective(AbstractTask abstractTask, TaskType taskType);
 
@@ -23,4 +27,6 @@ public interface TaskManager {
     void deleteById(int id, TaskType taskType);
 
     ArrayList<Subtask> getSubtasksByEpic(int epicId);
+
+    ArrayList<AbstractTask> getHistory();
 }
