@@ -4,7 +4,7 @@ import Tasks.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class InMemoryTaskManager implements TaskManager{
+public class InMemoryTaskManager implements TaskManager, HistoryManager{
 
     private HashMap<Integer, Task> tasks;
     private HashMap<Integer, Subtask> subtasks;
@@ -164,7 +164,8 @@ public class InMemoryTaskManager implements TaskManager{
         return history;
     }
 
-    private void addToHistory(AbstractTask task){
+    @Override
+    public void addToHistory(AbstractTask task){
         history.add(task);
         if (history.size() > 10){
             history.remove(0);
