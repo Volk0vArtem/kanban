@@ -4,46 +4,47 @@ import Tasks.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager{
 
     private HashMap<Integer, Task> tasks;
     private HashMap<Integer, Subtask> subtasks;
     private HashMap<Integer, Epic> epics;
 
-    public Manager() {
+    public InMemoryTaskManager() {
         tasks = new HashMap<>();
         subtasks = new HashMap<>();
         epics = new HashMap<>();
     }
 
+    @Override
     public HashMap<Integer, Task> getTasks() {
         return tasks;
     }
-
+    @Override
     public HashMap<Integer, Subtask> getSubtasks() {
         return subtasks;
     }
-
+    @Override
     public HashMap<Integer, Epic> getEpics() {
         return epics;
     }
-
+    @Override
     public void clearTasks() {
         tasks.clear();
     }
-
+    @Override
     public void clearEpics() {
         epics.clear();
         subtasks.clear();
     }
-
+    @Override
     public void clearSubtasks() {
         subtasks.clear();
         for (Epic epic : epics.values()) {
             update(epic.changeStatus(Status.NEW), epic.getId());
         }
     }
-
+    @Override
     public void addObjective(AbstractTask abstractTask, TaskType taskType) {
         switch (taskType) {
             case TASK:
@@ -61,7 +62,7 @@ public class Manager {
                 throw new IllegalArgumentException("Неправильно введен тип задачи");
         }
     }
-
+    @Override
     public AbstractTask getById(int id, TaskType type) {
         switch (type) {
             case TASK:
@@ -75,7 +76,7 @@ public class Manager {
                 throw new IllegalArgumentException("Неправильно введен тип задачи");
         }
     }
-
+    @Override
     public void update(AbstractTask abstractTask, int id) {
         switch (abstractTask.getTaskType()) {
             case TASK:
@@ -105,7 +106,7 @@ public class Manager {
                 throw new IllegalArgumentException("Неправильно введен тип задачи");
         }
     }
-
+    @Override
     public void deleteById(int id, TaskType taskType) {
         switch (taskType) {
             case TASK:
@@ -144,7 +145,7 @@ public class Manager {
 
         }
     }
-
+    @Override
     public ArrayList<Subtask> getSubtasksByEpic(int epicId) {
         if (!epics.containsKey(epicId)) {
             throw new IllegalArgumentException("Эпик не найден");

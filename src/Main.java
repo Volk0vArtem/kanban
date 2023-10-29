@@ -1,56 +1,56 @@
-import Manager.Manager;
+import Manager.InMemoryTaskManager;
 import Tasks.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        Manager manager = new Manager();
+        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
 
-        manager.addObjective(new Task("Приготовить завтрак", "Приготовить яичницу на завтрак"),
+        inMemoryTaskManager.addObjective(new Task("Приготовить завтрак", "Приготовить яичницу на завтрак"),
                 TaskType.TASK);
 
-        manager.addObjective(new Epic("Переезд", "Переехать в новую квартиру"), TaskType.EPIC);
-        manager.addObjective(new Subtask("Упаковать вещи", "Собрать вещи в коробки",
-                (Epic) manager.getById(1, TaskType.EPIC)), TaskType.SUBTASK);
-        manager.addObjective(new Subtask("Перевезти вещи", "Заказать доставку вещей в новую квартиру",
-                (Epic) manager.getById(1, TaskType.EPIC)), TaskType.SUBTASK);
+        inMemoryTaskManager.addObjective(new Epic("Переезд", "Переехать в новую квартиру"), TaskType.EPIC);
+        inMemoryTaskManager.addObjective(new Subtask("Упаковать вещи", "Собрать вещи в коробки",
+                (Epic) inMemoryTaskManager.getById(1, TaskType.EPIC)), TaskType.SUBTASK);
+        inMemoryTaskManager.addObjective(new Subtask("Перевезти вещи", "Заказать доставку вещей в новую квартиру",
+                (Epic) inMemoryTaskManager.getById(1, TaskType.EPIC)), TaskType.SUBTASK);
 
-        manager.addObjective(new Epic("Купить ноутбук", "Купить новый ноутбук"),
+        inMemoryTaskManager.addObjective(new Epic("Купить ноутбук", "Купить новый ноутбук"),
                 TaskType.EPIC);
-        manager.addObjective(new Subtask("Сходить в магазин электроники",
-                        "Прийти в магазин и выбрать ноутбук", (Epic) manager.getById(4, TaskType.EPIC)),
+        inMemoryTaskManager.addObjective(new Subtask("Сходить в магазин электроники",
+                        "Прийти в магазин и выбрать ноутбук", (Epic) inMemoryTaskManager.getById(4, TaskType.EPIC)),
                 TaskType.SUBTASK);
 
-        printAllObjectives(manager);
+        printAllObjectives(inMemoryTaskManager);
 
         System.out.println("\n------------------------\nИзменение статусов задач\n------------------------");
-        manager.update(manager.getTasks().get(0).changeStatus(Status.IN_PROGRESS), 0);
-        manager.update(manager.getSubtasks().get(2).changeStatus(Status.IN_PROGRESS), 2);
-        manager.update(manager.getSubtasks().get(3).changeStatus(Status.DONE), 3);
-        manager.update(manager.getSubtasks().get(5).changeStatus(Status.DONE), 5);
+        inMemoryTaskManager.update(inMemoryTaskManager.getTasks().get(0).changeStatus(Status.IN_PROGRESS), 0);
+        inMemoryTaskManager.update(inMemoryTaskManager.getSubtasks().get(2).changeStatus(Status.IN_PROGRESS), 2);
+        inMemoryTaskManager.update(inMemoryTaskManager.getSubtasks().get(3).changeStatus(Status.DONE), 3);
+        inMemoryTaskManager.update(inMemoryTaskManager.getSubtasks().get(5).changeStatus(Status.DONE), 5);
 
-        printAllObjectives(manager);
+        printAllObjectives(inMemoryTaskManager);
 
         System.out.println("\n---------------\nУдаление задач\n---------------");
-        manager.deleteById(2, TaskType.SUBTASK);
-        manager.clearTasks();
-        manager.deleteById(4, TaskType.EPIC);
-        printAllObjectives(manager);
+        inMemoryTaskManager.deleteById(2, TaskType.SUBTASK);
+        inMemoryTaskManager.clearTasks();
+        inMemoryTaskManager.deleteById(4, TaskType.EPIC);
+        printAllObjectives(inMemoryTaskManager);
     }
 
-    public static void printAllObjectives(Manager manager) {
+    public static void printAllObjectives(InMemoryTaskManager inMemoryTaskManager) {
         System.out.println("\nСписок задач:");
-        for (Task task : manager.getTasks().values()) {
+        for (Task task : inMemoryTaskManager.getTasks().values()) {
             System.out.println("\t" + task.toString());
         }
 
         System.out.println("\nСписок эпиков:");
-        for (Epic epic : manager.getEpics().values()) {
+        for (Epic epic : inMemoryTaskManager.getEpics().values()) {
             System.out.println("\t" + epic.toString());
         }
 
         System.out.println("\nСписок подзадач:");
-        for (Subtask subtask : manager.getSubtasks().values()) {
+        for (Subtask subtask : inMemoryTaskManager.getSubtasks().values()) {
             System.out.println("\t" + subtask.toString());
         }
     }
