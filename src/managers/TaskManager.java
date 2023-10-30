@@ -1,6 +1,6 @@
-package Managers;
+package managers;
 
-import Tasks.*;
+import tasks.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +27,5 @@ public interface TaskManager {
     void deleteById(int id, TaskType taskType);
 
     ArrayList<Subtask> getSubtasksByEpic(int epicId);
-
-    ArrayList<AbstractTask> getHistory();
+    HistoryManager getHistoryManager();
 }

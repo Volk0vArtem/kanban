@@ -1,21 +1,25 @@
-package Managers;
+package managers;
 
-import Tasks.*;
+import tasks.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class InMemoryTaskManager implements TaskManager, HistoryManager{
+public class InMemoryTaskManager implements TaskManager{
 
     private HashMap<Integer, Task> tasks;
     private HashMap<Integer, Subtask> subtasks;
     private HashMap<Integer, Epic> epics;
-    private ArrayList<AbstractTask> history;
+    private HistoryManager historyManager;
 
     public InMemoryTaskManager() {
         tasks = new HashMap<>();
         subtasks = new HashMap<>();
         epics = new HashMap<>();
-        history = new ArrayList<>();
+        historyManager = Managers.getDefaultHistory();
+    }
+
+    public HistoryManager getHistoryManager() {
+        return historyManager;
     }
 
     @Override
@@ -68,13 +72,13 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager{
     public AbstractTask getById(int id, TaskType type) {
         switch (type) {
             case TASK:
-                addToHistory(tasks.get(id));
+                historyManager.addToHistory(tasks.get(id));
                 return tasks.get(id);
             case EPIC:
-                addToHistory(epics.get(id));
+                historyManager.addToHistory(epics.get(id));
                 return epics.get(id);
             case SUBTASK:
-                addToHistory(subtasks.get(id));
+                historyManager.addToHistory(subtasks.get(id));
                 Subtask subtask = subtasks.get(id);
                 return subtask;
             default:
@@ -157,19 +161,6 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager{
         }
         Epic epic = epics.get(epicId);
         return epic.getSubtasks();
-    }
-
-    @Override
-    public ArrayList<AbstractTask> getHistory() {
-        return history;
-    }
-
-    @Override
-    public void addToHistory(AbstractTask task){
-        history.add(task);
-        if (history.size() > 10){
-            history.remove(0);
-        }
     }
 
     private void checkEpicStatus(int id) {

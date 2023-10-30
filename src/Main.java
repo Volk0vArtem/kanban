@@ -1,5 +1,5 @@
-import Managers.*;
-import Tasks.*;
+import managers.*;
+import tasks.*;
 
 public class Main {
 
@@ -85,14 +85,14 @@ public class Main {
 
     public static void printHistory(TaskManager taskManager) {
 
-        if (taskManager.getHistory().size() == 0) {
+        if (taskManager.getHistoryManager().getHistory().size() == 0) {
             System.out.println("\nИстория пуста");
             return;
         }
         System.out.println("\n История просмотра:");
-        for (AbstractTask a : taskManager.getHistory()) {
+        for (AbstractTask a : taskManager.getHistoryManager().getHistory()) {
             System.out.println(a);
         }
-        System.out.println("Размер списка просмотренных задач: " + taskManager.getHistory().size());
+        System.out.println("Размер списка просмотренных задач: " + taskManager.getHistoryManager().getHistory().size());
     }
 }
