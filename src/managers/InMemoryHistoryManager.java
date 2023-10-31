@@ -3,6 +3,7 @@ package managers;
 import tasks.AbstractTask;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager{
     private ArrayList<AbstractTask> history;
@@ -12,7 +13,7 @@ public class InMemoryHistoryManager implements HistoryManager{
     }
 
     @Override
-    public ArrayList<AbstractTask> getHistory() {
+    public List<AbstractTask> getHistory() {
         return history;
     }
 
