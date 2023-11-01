@@ -85,14 +85,14 @@ public class Main {
 
     public static void printHistory(TaskManager taskManager) {
 
-        if (taskManager.getHistoryManager().getHistory().size() == 0) {
+        if (taskManager.getHistory().size() == 0) {
             System.out.println("\nИстория пуста");
             return;
         }
         System.out.println("\n История просмотра:");
-        for (AbstractTask a : taskManager.getHistoryManager().getHistory()) {
+        for (AbstractTask a : taskManager.getHistory()) {
             System.out.println(a);
         }
-        System.out.println("Размер списка просмотренных задач: " + taskManager.getHistoryManager().getHistory().size());
+        System.out.println("Размер списка просмотренных задач: " + taskManager.getHistory().size());
     }
 }

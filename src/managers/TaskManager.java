@@ -4,6 +4,7 @@ import tasks.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public interface TaskManager {
     HashMap<Integer, Task> getTasks();
@@ -27,5 +28,5 @@ public interface TaskManager {
     void deleteById(int id, TaskType taskType);
 
     ArrayList<Subtask> getSubtasksByEpic(int epicId);
-    HistoryManager getHistoryManager();
+    List<AbstractTask> getHistory();
 }

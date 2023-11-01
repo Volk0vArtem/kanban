@@ -3,6 +3,7 @@ package managers;
 import tasks.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager{
 
@@ -18,8 +19,8 @@ public class InMemoryTaskManager implements TaskManager{
         historyManager = Managers.getDefaultHistory();
     }
 
-    public HistoryManager getHistoryManager() {
-        return historyManager;
+    public List<AbstractTask> getHistory() {
+        return historyManager.getHistory();
     }
 
     @Override
