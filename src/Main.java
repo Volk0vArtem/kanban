@@ -6,62 +6,54 @@ public class Main {
     public static void main(String[] args) {
         TaskManager inMemoryTaskManager = Managers.getDefault();
 
+
+        printHistory(inMemoryTaskManager);
         inMemoryTaskManager.addObjective(new Task("Приготовить завтрак",
-                        "Приготовить яичницу на завтрак"), TaskType.TASK);
-        printHistory(inMemoryTaskManager);
-
+                "Приготовить яичницу на завтрак"), TaskType.TASK);
+        inMemoryTaskManager.addObjective(new Task("Сходить в магазин",
+                "Купить хлеб"), TaskType.TASK);
         inMemoryTaskManager.addObjective(new Epic("Переезд",
-                "Переехать в новую квартиру"), TaskType.EPIC);
-        printHistory(inMemoryTaskManager);
-
+                        "Переехать в новую квартиру"), TaskType.EPIC);
         inMemoryTaskManager.addObjective(new Subtask("Упаковать вещи", "Собрать вещи в коробки",
-                (Epic) inMemoryTaskManager.getById(1, TaskType.EPIC)), TaskType.SUBTASK);
-        printHistory(inMemoryTaskManager);
-
+                (Epic) inMemoryTaskManager.getById(2, TaskType.EPIC)), TaskType.SUBTASK);
         inMemoryTaskManager.addObjective(new Subtask("Перевезти вещи",
                 "Заказать доставку вещей в новую квартиру",
-                (Epic) inMemoryTaskManager.getById(1, TaskType.EPIC)), TaskType.SUBTASK);
+                (Epic) inMemoryTaskManager.getById(2, TaskType.EPIC)), TaskType.SUBTASK);
+        inMemoryTaskManager.addObjective(new Subtask("Забрать кота", "Посадить кота в переноску",
+                (Epic) inMemoryTaskManager.getById(2, TaskType.EPIC)), TaskType.SUBTASK);
+        inMemoryTaskManager.addObjective(new Epic("Купить ноутбук", "Купить новый ноутбук"),
+                TaskType.EPIC);
+
         printHistory(inMemoryTaskManager);
 
-        inMemoryTaskManager.addObjective(new Epic("Купить ноутбук",
-                "Купить новый ноутбук"), TaskType.EPIC);
+        inMemoryTaskManager.getById(0, TaskType.TASK);
+        printHistory(inMemoryTaskManager);
+        inMemoryTaskManager.getById(1, TaskType.TASK);
+        printHistory(inMemoryTaskManager);
+        inMemoryTaskManager.getById(2, TaskType.EPIC);
+        printHistory(inMemoryTaskManager);
+        inMemoryTaskManager.getById(3, TaskType.SUBTASK);
+        printHistory(inMemoryTaskManager);
+        inMemoryTaskManager.getById(4, TaskType.SUBTASK);
+        printHistory(inMemoryTaskManager);
+        inMemoryTaskManager.getById(5, TaskType.SUBTASK);
+        printHistory(inMemoryTaskManager);
+        inMemoryTaskManager.getById(6, TaskType.EPIC);
         printHistory(inMemoryTaskManager);
 
-        inMemoryTaskManager.addObjective(new Subtask("Сходить в магазин электроники",
-                        "Прийти в магазин и выбрать ноутбук",
-                        (Epic) inMemoryTaskManager.getById(4, TaskType.EPIC)), TaskType.SUBTASK);
+        inMemoryTaskManager.getById(3, TaskType.SUBTASK);
+        printHistory(inMemoryTaskManager);
+        inMemoryTaskManager.getById(1, TaskType.TASK);
+        printHistory(inMemoryTaskManager);
+        inMemoryTaskManager.getById(2, TaskType.EPIC);
+        printHistory(inMemoryTaskManager);
+        inMemoryTaskManager.getById(0, TaskType.TASK);
         printHistory(inMemoryTaskManager);
 
-        inMemoryTaskManager.update(inMemoryTaskManager.getById(0, TaskType.TASK)
-                .changeStatus(Status.IN_PROGRESS), 0);
+        inMemoryTaskManager.deleteById(0,TaskType.TASK);
         printHistory(inMemoryTaskManager);
 
-        inMemoryTaskManager.update(inMemoryTaskManager.getById(2, TaskType.SUBTASK)
-                .changeStatus(Status.IN_PROGRESS), 2);
-        printHistory(inMemoryTaskManager);
-
-        inMemoryTaskManager.update(inMemoryTaskManager.getById(3,
-                TaskType.SUBTASK).changeStatus(Status.IN_PROGRESS), 3);
-        printHistory(inMemoryTaskManager);
-
-        inMemoryTaskManager.update(inMemoryTaskManager.getById(5,
-                TaskType.SUBTASK).changeStatus(Status.IN_PROGRESS), 5);
-        printHistory(inMemoryTaskManager);
-
-        inMemoryTaskManager.update(inMemoryTaskManager.getById(2,
-                TaskType.SUBTASK).changeStatus(Status.DONE), 2);
-        printHistory(inMemoryTaskManager);
-
-        inMemoryTaskManager.update(inMemoryTaskManager.getById(3,
-                TaskType.SUBTASK).changeStatus(Status.DONE), 3);
-        printHistory(inMemoryTaskManager);
-
-        inMemoryTaskManager.update(inMemoryTaskManager.getById(5,
-                TaskType.SUBTASK).changeStatus(Status.DONE), 5);
-        printHistory(inMemoryTaskManager);
-
-        inMemoryTaskManager.update(inMemoryTaskManager.getById(5,
-                TaskType.SUBTASK).changeStatus(Status.DONE), 5);
+        inMemoryTaskManager.deleteById(3,TaskType.SUBTASK);
         printHistory(inMemoryTaskManager);
 
     }
