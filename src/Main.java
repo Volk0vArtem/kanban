@@ -56,6 +56,8 @@ public class Main {
         inMemoryTaskManager.deleteById(3,TaskType.SUBTASK);
         printHistory(inMemoryTaskManager);
 
+        inMemoryTaskManager.deleteById(2,TaskType.EPIC);
+        printHistory(inMemoryTaskManager);
     }
 
     public static void printAllObjectives(TaskManager TaskManager) {

@@ -4,14 +4,13 @@ import tasks.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager{
 
-    private HashMap<Integer, Task> tasks;
-    private HashMap<Integer, Subtask> subtasks;
-    private HashMap<Integer, Epic> epics;
-    private HistoryManager historyManager;
+    private final HashMap<Integer, Task> tasks;
+    private final HashMap<Integer, Subtask> subtasks;
+    private final HashMap<Integer, Epic> epics;
+    private final HistoryManager historyManager;
 
     public InMemoryTaskManager() {
         tasks = new HashMap<>();
@@ -81,8 +80,7 @@ public class InMemoryTaskManager implements TaskManager{
                 return epics.get(id);
             case SUBTASK:
                 historyManager.addToHistory(subtasks.get(id));
-                Subtask subtask = subtasks.get(id);
-                return subtask;
+                return subtasks.get(id);
             default:
                 throw new IllegalArgumentException("Неправильно введен тип задачи");
         }
@@ -134,13 +132,17 @@ public class InMemoryTaskManager implements TaskManager{
                     return;
                 }
                 Epic epic = epics.get(id);
+                List<Integer> subs = new ArrayList<>();
                 for (Subtask subtask : getSubtasksByEpic(epic.getId())) {
                     for (int subId : subtasks.keySet()) {
                         if (subtasks.get(subId).getEpic().equals(epic)) {
                             historyManager.remove(subId);
-                            subtasks.remove(subId);
+                            subs.add(subId);
                         }
                     }
+                }
+                for (Integer i : subs){
+                    subtasks.remove(i);
                 }
                 historyManager.remove(id);
                 epics.remove(id);
