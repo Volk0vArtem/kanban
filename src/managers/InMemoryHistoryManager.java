@@ -40,7 +40,7 @@ class CustomLinkedList{
         nodeMap = new HashMap<>();
     }
 
-    public void linkLast(AbstractTask data){
+    private void linkLast(AbstractTask data){
         Node<AbstractTask> last = tail;
         Node<AbstractTask> newNode = new Node<>(tail, data, null);
         tail = newNode;
