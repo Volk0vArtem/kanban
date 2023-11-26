@@ -54,11 +54,11 @@ class CustomLinkedList{
 
     public List<AbstractTask> getTasks(){
         ArrayList<AbstractTask> taskList = new ArrayList<>();
-        Node<AbstractTask> node = head;
-        while (node != null){
-            AbstractTask task = node.data;
+        Node<AbstractTask> currentNode = tail;
+        while (currentNode != null){
+            AbstractTask task = currentNode.data;
             taskList.add(task);
-            node = node.next;
+            currentNode = currentNode.prev;
         }
         return taskList;
     }
