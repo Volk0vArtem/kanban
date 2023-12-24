@@ -6,6 +6,15 @@ public class Epic extends AbstractTask {
 
     private ArrayList<Subtask> subtasks;
 
+    public Epic(String id, String name, String status, String description){
+        this.id = Integer.parseInt(id);
+        this.name = name;
+        this.status = Status.valueOf(status);
+        this.description = description;
+        subtasks = new ArrayList<>();
+        this.taskType = TaskType.EPIC;
+    }
+
     public Epic(String name, String description) {
         super(name, description);
         this.taskType = TaskType.EPIC;

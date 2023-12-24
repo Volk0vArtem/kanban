@@ -9,7 +9,9 @@ public abstract class AbstractTask {
     protected Status status;
     protected TaskType taskType;
     protected int id;
-    private static int count;
+    protected static int count;
+
+    public AbstractTask(){}
 
     public int getId() {
         return id;
@@ -37,6 +39,10 @@ public abstract class AbstractTask {
 
     public static int getCount() {
         return count;
+    }
+
+    public static void setCount(int count) {
+        AbstractTask.count = count;
     }
 
     public void setName(String name) {
@@ -90,4 +96,10 @@ public abstract class AbstractTask {
     public int hashCode() {
         return Objects.hash(name, description, status, taskType);
     }
+
+    public String toCSV(){
+        return id + "," + taskType + "," + name + "," + status + "," + description;
+    }
+
+
 }

@@ -7,10 +7,10 @@ import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager{
 
-    private final HashMap<Integer, Task> tasks;
-    private final HashMap<Integer, Subtask> subtasks;
-    private final HashMap<Integer, Epic> epics;
-    private final HistoryManager historyManager;
+    protected final HashMap<Integer, Task> tasks;
+    protected final HashMap<Integer, Subtask> subtasks;
+    protected final HashMap<Integer, Epic> epics;
+    protected final HistoryManager historyManager;
 
     public InMemoryTaskManager() {
         tasks = new HashMap<>();
@@ -21,6 +21,10 @@ public class InMemoryTaskManager implements TaskManager{
 
     public List<AbstractTask> getHistory() {
         return historyManager.getHistory();
+    }
+
+    public HistoryManager getHistoryManager() {
+        return historyManager;
     }
 
     @Override
@@ -85,6 +89,29 @@ public class InMemoryTaskManager implements TaskManager{
                 throw new IllegalArgumentException("Неправильно введен тип задачи");
         }
     }
+
+    public AbstractTask getById(int id) {
+        for (Integer i : tasks.keySet()){
+            if (i == id){
+                return tasks.get(id);
+            }
+        }
+
+        for (Integer i : epics.keySet()){
+            if (i == id){
+                return epics.get(id);
+            }
+        }
+
+        for (Integer i : subtasks.keySet()){
+            if (i == id){
+                return subtasks.get(id);
+            }
+        }
+        throw new RuntimeException("Задача не найдена");
+    }
+
+
     @Override
     public void update(AbstractTask abstractTask, int id) {
         switch (abstractTask.getTaskType()) {
@@ -171,7 +198,7 @@ public class InMemoryTaskManager implements TaskManager{
         return epic.getSubtasks();
     }
 
-    private void checkEpicStatus(int id) {
+    protected void checkEpicStatus(int id) {
         Epic epic = epics.get(id);
         int inProgress = 0;
         int done = 0;
