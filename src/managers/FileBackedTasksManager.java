@@ -124,36 +124,35 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             break;
             case EPIC: epics.put(Integer.valueOf(values[0]), CSVFormat.epicFromCsv(values));
             break;
-            case SUBTASK: subtasks.put(Integer.valueOf(values[0]), CSVFormat.subtaskFromCsv(values,epics));
+            case SUBTASK: {
+                Subtask subtask = CSVFormat.subtaskFromCsv(values,epics);
+                subtasks.put(Integer.valueOf(values[0]), subtask);
+                subtask.getEpic().addSubtask(subtask);
+            }
             break;
         }
     }
 
     public static void main(String[] args) {
-
-        File file = new File("src/resources/save1.txt");
-        FileBackedTasksManager manager1 = Managers.detDefaultFileBacked(file);
-
-        manager1.addObjective(new Task("Task0", "description"), TaskType.TASK);
-        manager1.addObjective(new Task("Task1", "description"), TaskType.TASK);
-        manager1.addObjective(new Task("Task2", "description"), TaskType.TASK);
-
-        manager1.addObjective(new Epic("Epic3", "description"), TaskType.EPIC);
-        manager1.addObjective(new Epic("Epic4", "description"), TaskType.EPIC);
-
-        manager1.addObjective(new Subtask("Subtask5", "description",
-                (Epic) manager1.getById(4, TaskType.EPIC)),TaskType.SUBTASK);
-
-        manager1.getById(0,TaskType.TASK);
-        manager1.getById(1,TaskType.TASK);
-        manager1.getById(2,TaskType.TASK);
-
-        FileBackedTasksManager manager2 = FileBackedTasksManager.loadFromFile(file);
-        manager2.getById(3,TaskType.EPIC);
-        manager2.getById(4,TaskType.EPIC);
-        manager2.getById(5,TaskType.SUBTASK);
-        manager2.addObjective(new Task("Task6", "description"), TaskType.TASK);
-        manager2.getById(6,TaskType.TASK);
+        Epic epic = new Epic("new Epic", "Новый Эпик");
+        FileBackedTasksManager fileManager = new FileBackedTasksManager(new File("saveTasks2.csv"));
+        fileManager.addObjective(epic, TaskType.EPIC);
+        fileManager.addObjective(new Task("task1", "Купить автомобиль"), TaskType.TASK);
+        fileManager.addObjective(new Epic("new Epic2", "Новый Эпик2"), TaskType.EPIC);
+        fileManager.addObjective(new Subtask("New Subtask", "Подзадача", (Epic) fileManager.getById(0, TaskType.EPIC)), TaskType.SUBTASK);
+        fileManager.addObjective(new Subtask("New Subtask2", "Подзадача2", (Epic) fileManager.getById(0, TaskType.EPIC)), TaskType.SUBTASK);
+        fileManager.getById(1, TaskType.TASK);
+        fileManager.getById(2, TaskType.EPIC);
+        fileManager.getById(3, TaskType.SUBTASK);
+        System.out.println(fileManager.getTasks());
+        System.out.println(fileManager.getEpics());
+        System.out.println(fileManager.getSubtasks());
+        System.out.println(fileManager.getHistory());
+        System.out.println("\n\n" + "new" + "\n\n");
+        FileBackedTasksManager fileBackedTasksManager = loadFromFile(new File("saveTasks2.csv"));
+        System.out.println(fileBackedTasksManager.getTasks());
+        System.out.println(fileBackedTasksManager.getEpics());
+        System.out.println(fileBackedTasksManager.getSubtasks());
+        System.out.println(fileBackedTasksManager.getHistory());
     }
 }
-
