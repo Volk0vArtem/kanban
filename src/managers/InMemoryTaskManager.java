@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class InMemoryTaskManager implements TaskManager{
+public class InMemoryTaskManager implements TaskManager {
 
     protected final HashMap<Integer, Task> tasks;
     protected final HashMap<Integer, Subtask> subtasks;
@@ -31,23 +31,28 @@ public class InMemoryTaskManager implements TaskManager{
     public HashMap<Integer, Task> getTasks() {
         return tasks;
     }
+
     @Override
     public HashMap<Integer, Subtask> getSubtasks() {
         return subtasks;
     }
+
     @Override
     public HashMap<Integer, Epic> getEpics() {
         return epics;
     }
+
     @Override
     public void clearTasks() {
         tasks.clear();
     }
+
     @Override
     public void clearEpics() {
         epics.clear();
         subtasks.clear();
     }
+
     @Override
     public void clearSubtasks() {
         subtasks.clear();
@@ -55,6 +60,7 @@ public class InMemoryTaskManager implements TaskManager{
             update(epic.changeStatus(Status.NEW), epic.getId());
         }
     }
+
     @Override
     public void addObjective(AbstractTask abstractTask, TaskType taskType) {
         switch (taskType) {
@@ -73,6 +79,7 @@ public class InMemoryTaskManager implements TaskManager{
                 throw new IllegalArgumentException("Неправильно введен тип задачи");
         }
     }
+
     @Override
     public AbstractTask getById(int id, TaskType type) {
         switch (type) {
@@ -91,20 +98,20 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     public AbstractTask getById(int id) {
-        for (Integer i : tasks.keySet()){
-            if (i == id){
+        for (Integer i : tasks.keySet()) {
+            if (i == id) {
                 return tasks.get(id);
             }
         }
 
-        for (Integer i : epics.keySet()){
-            if (i == id){
+        for (Integer i : epics.keySet()) {
+            if (i == id) {
                 return epics.get(id);
             }
         }
 
-        for (Integer i : subtasks.keySet()){
-            if (i == id){
+        for (Integer i : subtasks.keySet()) {
+            if (i == id) {
                 return subtasks.get(id);
             }
         }
@@ -142,6 +149,7 @@ public class InMemoryTaskManager implements TaskManager{
                 throw new IllegalArgumentException("Неправильно введен тип задачи");
         }
     }
+
     @Override
     public void deleteById(int id, TaskType taskType) {
         switch (taskType) {
@@ -168,7 +176,7 @@ public class InMemoryTaskManager implements TaskManager{
                         }
                     }
                 }
-                for (Integer i : subs){
+                for (Integer i : subs) {
                     subtasks.remove(i);
                 }
                 historyManager.remove(id);
@@ -189,6 +197,7 @@ public class InMemoryTaskManager implements TaskManager{
 
         }
     }
+
     @Override
     public ArrayList<Subtask> getSubtasksByEpic(int epicId) {
         if (!epics.containsKey(epicId)) {
@@ -202,24 +211,30 @@ public class InMemoryTaskManager implements TaskManager{
         Epic epic = epics.get(id);
         int inProgress = 0;
         int done = 0;
+        int newSubtask = 0;
 
         for (Subtask subtask : epic.getSubtasks()) {
             if (subtask.getStatus() == Status.IN_PROGRESS) {
                 inProgress++;
             } else if (subtask.getStatus() == Status.DONE) {
                 done++;
+            } else if (subtask.getStatus() == Status.NEW) {
+                newSubtask++;
             }
-        }
 
-        if (inProgress > 0) {
-            epic.setStatus(Status.IN_PROGRESS);
-            update(epic, id);
-        } else if (done > 0 && inProgress == 0) {
-            epic.setStatus(Status.DONE);
-            update(epic, id);
-        } else {
-            epic.setStatus(Status.NEW);
-            update(epic, id);
+            if (inProgress > 0) {
+                epic.setStatus(Status.IN_PROGRESS);
+                update(epic, id);
+            } else if (done > 0 && newSubtask > 0) {
+                epic.setStatus(Status.IN_PROGRESS);
+                update(epic, id);
+            } else if (done > 0 && newSubtask == 0) {
+                epic.setStatus(Status.DONE);
+                update(epic, id);
+            } else {
+                epic.setStatus(Status.NEW);
+                update(epic, id);
+            }
         }
     }
 }
