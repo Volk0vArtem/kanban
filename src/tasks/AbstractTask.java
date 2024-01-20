@@ -68,6 +68,10 @@ public abstract class AbstractTask {
         return count++;
     }
 
+    public static void countReset(){
+        count = 0;
+    }
+
     public AbstractTask changeStatus(Status status) {
         AbstractTask newTask = this;
         newTask.setStatus(status);

@@ -17,6 +17,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks = new HashMap<>();
         epics = new HashMap<>();
         historyManager = Managers.getDefaultHistory();
+        AbstractTask.countReset();
     }
 
     public List<AbstractTask> getHistory() {
@@ -141,8 +142,8 @@ public class InMemoryTaskManager implements TaskManager {
                     System.out.println("Подзадача не найдена");
                     return;
                 }
-                subtasks.put(id, (Subtask) abstractTask);
                 Subtask subtask = (Subtask) abstractTask;
+                subtasks.put(id, subtask);
                 checkEpicStatus(subtask.getEpic().getId());
                 break;
             default:
@@ -221,7 +222,7 @@ public class InMemoryTaskManager implements TaskManager {
             } else if (subtask.getStatus() == Status.NEW) {
                 newSubtask++;
             }
-
+        }
             if (inProgress > 0) {
                 epic.setStatus(Status.IN_PROGRESS);
                 update(epic, id);
@@ -234,7 +235,7 @@ public class InMemoryTaskManager implements TaskManager {
             } else {
                 epic.setStatus(Status.NEW);
                 update(epic, id);
-            }
+
         }
     }
 }

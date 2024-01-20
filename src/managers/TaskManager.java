@@ -26,6 +26,7 @@ public interface TaskManager {
     void update(AbstractTask abstractTask, int id);
 
     void deleteById(int id, TaskType taskType);
+    AbstractTask getById(int id);
 
     ArrayList<Subtask> getSubtasksByEpic(int epicId);
     List<AbstractTask> getHistory();

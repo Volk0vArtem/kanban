@@ -84,7 +84,9 @@ class CustomLinkedList{
     }
 
     public void remove(int id){
-        removeNode(nodeMap.get(id));
+        if (nodeMap.containsKey(id)) {
+            removeNode(nodeMap.get(id));
+        }
     }
 
     public void add(AbstractTask task){

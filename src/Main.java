@@ -53,10 +53,16 @@ public class Main {
         inMemoryTaskManager.deleteById(0,TaskType.TASK);
         printHistory(inMemoryTaskManager);
 
-        inMemoryTaskManager.deleteById(3,TaskType.SUBTASK);
-        printHistory(inMemoryTaskManager);
+
+
+//        inMemoryTaskManager.deleteById(3,TaskType.SUBTASK);
+//        printHistory(inMemoryTaskManager);
 
         inMemoryTaskManager.deleteById(2,TaskType.EPIC);
+        printHistory(inMemoryTaskManager);
+
+
+        inMemoryTaskManager.deleteById(6, TaskType.EPIC);
         printHistory(inMemoryTaskManager);
     }
 

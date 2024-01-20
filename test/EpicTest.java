@@ -1,8 +1,12 @@
-package tasks;
-
 import managers.InMemoryTaskManager;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tasks.Epic;
+import tasks.Status;
+import tasks.Subtask;
+import tasks.TaskType;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class EpicTest {
@@ -27,7 +31,7 @@ class EpicTest {
         Subtask subtask2 = new Subtask("name","description",epic);
         manager.addObjective(subtask1, TaskType.SUBTASK);
         manager.addObjective(subtask2, TaskType.SUBTASK);
-        assertEquals(Status.NEW, epic.getStatus());
+        Assertions.assertEquals(Status.NEW, epic.getStatus());
     }
 
     @Test
