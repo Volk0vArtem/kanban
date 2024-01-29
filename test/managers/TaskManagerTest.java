@@ -1,3 +1,5 @@
+package managers;
+
 import managers.TaskManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +38,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Epic newEpic = new Epic("name", "description");
         taskManager.addObjective(newEpic, TaskType.EPIC);
         assertEquals(newEpic, taskManager.getById(3));
+
     }
 
     @Test
@@ -68,8 +71,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(1, taskManager.getTasks().size());
     }
 
-
-
     @Test
     void deleteTask() {
         taskManager.deleteById(0, TaskType.TASK);
@@ -79,27 +80,29 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void epicWithDoneSubtasks() {
-        taskManager.update(subtask.changeStatus(Status.DONE), 2);
-        assertEquals(Status.DONE, epic.getStatus());
-    }
-
-    @Test
-    void epicWithEmptySubtasks() {
-        taskManager.addObjective(new Epic("newEpic", "emptySubtasks"), TaskType.EPIC);
-        assertEquals(Status.NEW, taskManager.getById(3).getStatus());
-    }
-
-    @Test
-    void epicWithInProgressNewSubtasks() {
-        taskManager.addObjective(new Subtask("newSubtask", "new", epic), TaskType.SUBTASK);
-        taskManager.update(subtask.changeStatus(Status.IN_PROGRESS), 2);
-        assertEquals(Status.IN_PROGRESS, epic.getStatus());
-    }
-
-    @Test
-    void epicWithNewSubtasks() {
+    void checkEpicStatus(){
+        Epic newEpic = new Epic("name", "description");
+        taskManager.addObjective(newEpic, TaskType.EPIC);
         assertEquals(Status.NEW, epic.getStatus());
+
+        Subtask newSubtask1 = new Subtask("newSubtask1", "new", newEpic);
+        Subtask newSubtask2 = new Subtask("newSubtask1", "new", newEpic);
+
+        taskManager.addObjective(newSubtask1, TaskType.SUBTASK);
+        taskManager.addObjective(newSubtask2, TaskType.SUBTASK);
+        assertEquals(Status.NEW, newEpic.getStatus());
+
+        taskManager.update(newSubtask1.changeStatus(Status.IN_PROGRESS), 4);
+        assertEquals(Status.IN_PROGRESS, newEpic.getStatus());
+
+        taskManager.update(newSubtask2.changeStatus(Status.IN_PROGRESS), 5);
+        assertEquals(Status.IN_PROGRESS, newEpic.getStatus());
+
+        taskManager.update(newSubtask1.changeStatus(Status.DONE), 4);
+        assertEquals(Status.IN_PROGRESS, newEpic.getStatus());
+
+        taskManager.update(newSubtask2.changeStatus(Status.DONE), 5);
+        assertEquals(Status.DONE, newEpic.getStatus());
     }
 
     @Test
@@ -114,7 +117,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         HashMap<Integer, Epic> epics = new HashMap<>();
         epics.put(1,epic);
         epics.put(3, newEpic);
-        assertTrue(epics.equals(taskManager.getEpics()));
+        assertEquals(epics, taskManager.getEpics());
     }
 
     @Test
@@ -124,7 +127,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         ArrayList<Subtask> subtasks = new ArrayList<>();
         subtasks.add(subtask);
         subtasks.add(newSubtask);
-        assertTrue(subtasks.equals(taskManager.getSubtasksByEpic(1)));
+        assertEquals(subtasks, taskManager.getSubtasksByEpic(1));
     }
 
     @Test
@@ -137,7 +140,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         history.add(subtask);
         history.add(epic);
         history.add(task);
-        assertTrue(history.equals(taskManager.getHistory()));
+        assertEquals(history, taskManager.getHistory());
     }
 
 
@@ -157,7 +160,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         HashMap<Integer, Subtask> subtasks = new HashMap<>();
         subtasks.put(2, subtask);
         subtasks.put(3, newSubtask);
-        assertTrue(subtasks.equals(taskManager.getSubtasks()));
+        assertEquals(subtasks, taskManager.getSubtasks());
     }
 
     @Test
@@ -172,7 +175,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         HashMap<Integer, Task> tasks = new HashMap<>();
         tasks.put(0, task);
         tasks.put(3, newTask);
-        assertTrue(tasks.equals(taskManager.getTasks()));
+        assertEquals(tasks, taskManager.getTasks());
     }
 
     @Test

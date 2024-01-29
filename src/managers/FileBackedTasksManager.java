@@ -134,6 +134,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static void main(String[] args) {
+
+        /*
         Epic epic = new Epic("new Epic", "Новый Эпик");
         FileBackedTasksManager fileManager = new FileBackedTasksManager(new File("saveTasks2.csv"));
         fileManager.addObjective(epic, TaskType.EPIC);
@@ -154,5 +156,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println(fileBackedTasksManager.getEpics());
         System.out.println(fileBackedTasksManager.getSubtasks());
         System.out.println(fileBackedTasksManager.getHistory());
+
+
+         */
+        FileBackedTasksManager fileManager = new FileBackedTasksManager(new File("saveTasks2.csv"));
+        Epic epic = new Epic("epic", "0");
+        Task task = new Task("task", "1");
+        Task task2 = new Task("task", "2");
+        //Subtask subtask = new Subtask("subtask", "2", epic);
+
+        fileManager.addObjective(epic, TaskType.EPIC);
+        fileManager.addObjective(task, TaskType.TASK);
+        fileManager.addObjective(task2, TaskType.TASK);
+        //fileManager.addObjective(subtask, TaskType.SUBTASK);
+        fileManager.getById(0, TaskType.EPIC);
+        fileManager.getById(1, TaskType.TASK);
+        fileManager.getById(2, TaskType.TASK);
+        fileManager.deleteById(2, TaskType.TASK);
+
+
+
     }
 }

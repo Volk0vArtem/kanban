@@ -1,3 +1,5 @@
+package managers;
+
 import managers.InMemoryTaskManager;
 import managers.Managers;
 import managers.TaskManager;
@@ -10,7 +12,7 @@ import tasks.Task;
 import tasks.TaskType;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager>{
+public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
     @BeforeEach
     public void setUp(){
