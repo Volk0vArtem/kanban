@@ -74,7 +74,6 @@ public class InMemoryTaskManager implements TaskManager {
             case SUBTASK:
                 Subtask subtask = (Subtask) abstractTask;
                 subtasks.put(subtask.getId(), subtask);
-                subtask.getEpic().addSubtask(subtask);
                 break;
             default:
                 throw new IllegalArgumentException("Неправильно введен тип задачи");

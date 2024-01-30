@@ -1,5 +1,8 @@
 package tasks;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public abstract class AbstractTask {
@@ -10,8 +13,40 @@ public abstract class AbstractTask {
     protected TaskType taskType;
     protected int id;
     protected static int count;
+    protected LocalDateTime startTime;
+    protected LocalDateTime endTime;
+    protected Duration duration;
+    protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd_MM_yyyy|HH:mm");
 
     public AbstractTask(){}
+
+    public void setTaskType(TaskType taskType) {
+        this.taskType = taskType;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
 
     public int getId() {
         return id;
@@ -85,6 +120,9 @@ public abstract class AbstractTask {
                 ", description='" + description + '\'' +
                 ", status=" + status +
                 ", id=" + id +
+                ", startTime=" + startTime +
+                ",endTime=" + endTime +
+                "duration=" + duration +
                 '}';
     }
 
@@ -92,18 +130,23 @@ public abstract class AbstractTask {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AbstractTask abstractTask = (AbstractTask) o;
-        return Objects.equals(name, abstractTask.name) && Objects.equals(description, abstractTask.description) && status == abstractTask.status && taskType == abstractTask.taskType;
+        AbstractTask that = (AbstractTask) o;
+        return id == that.id && Objects.equals(name, that.name) && Objects.equals(description, that.description) && status == that.status && taskType == that.taskType && Objects.equals(startTime, that.startTime) && Objects.equals(endTime, that.endTime) && Objects.equals(duration, that.duration);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, status, taskType);
+        return Objects.hash(name, description, status, taskType, id, startTime, endTime, duration);
     }
 
     public String toCSV(){
-        return id + "," + taskType + "," + name + "," + status + "," + description;
+        if (startTime == null && endTime == null && duration == null){
+            return id + "," + taskType + "," + name + "," + status + "," + description + "," + startTime
+                    + "," + endTime + "," + duration;
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd_MM_yyyy|HH:mm");
+        return id + "," + taskType + "," + name + "," + status + "," + description + "," + startTime.format(formatter)
+                + "," + endTime.format(formatter) + "," + duration;
+
     }
-
-
 }

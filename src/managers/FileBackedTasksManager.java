@@ -7,6 +7,8 @@ import utils.CSVFormat;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
@@ -21,7 +23,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private void save(){
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(file))){
 
-            bw.write("id,type,name,status,description,epic");
+            bw.write("id,type,name,status,description,startTime,endTime,duration,epic");
             bw.newLine();
 
             for (Task task : tasks.values()){
@@ -161,20 +163,33 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
          */
         FileBackedTasksManager fileManager = new FileBackedTasksManager(new File("saveTasks2.csv"));
         Epic epic = new Epic("epic", "0");
-        Task task = new Task("task", "1");
-        Task task2 = new Task("task", "2");
-        //Subtask subtask = new Subtask("subtask", "2", epic);
+        Task task = new Task("task", "1",
+                LocalDateTime.of(2024,1,1,10, 0), Duration.ofHours(1));
+        Task task2 = new Task("task", "2",
+                LocalDateTime.of(2024,1,2,10, 0), Duration.ofHours(2));
+        Subtask subtask = new Subtask("subtask", "3", epic,
+                LocalDateTime.of(2024,1,22,15, 0), Duration.ofHours(5));
+        Subtask subtask2 = new Subtask("subtask", "3", epic,
+                LocalDateTime.of(2024,1,23,15, 0), Duration.ofHours(4));
 
         fileManager.addObjective(epic, TaskType.EPIC);
         fileManager.addObjective(task, TaskType.TASK);
         fileManager.addObjective(task2, TaskType.TASK);
-        //fileManager.addObjective(subtask, TaskType.SUBTASK);
+        fileManager.addObjective(subtask, TaskType.SUBTASK);
+        fileManager.addObjective(subtask2, TaskType.SUBTASK);
+
         fileManager.getById(0, TaskType.EPIC);
         fileManager.getById(1, TaskType.TASK);
         fileManager.getById(2, TaskType.TASK);
-        fileManager.deleteById(2, TaskType.TASK);
+        fileManager.getById(3, TaskType.SUBTASK);
+        fileManager.getById(4, TaskType.SUBTASK);
 
+        FileBackedTasksManager fileManager2 = FileBackedTasksManager.loadFromFile(new File("saveTasks2.csv"));
 
+        System.out.println(fileManager.getTasks().equals(fileManager2.getTasks()));
+        System.out.println(fileManager.getSubtasks().equals(fileManager2.getSubtasks()));
+        System.out.println(fileManager.getEpics().equals(fileManager2.getEpics()));
+        System.out.println(fileManager.getHistory().equals(fileManager2.getHistory()));
 
     }
 }

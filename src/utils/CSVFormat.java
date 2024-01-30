@@ -37,14 +37,15 @@ public class CSVFormat {
     }
 
     public static Epic epicFromCsv(String[] values) {
-        return new Epic(values[0], values[2], values[3], values[4]);
+        return new Epic(values[0], values[2], values[3], values[4],values[5], values[6], values[7]);
     }
 
     public static Task taskFromCsv(String[] values) {
-        return new Task(values[0], values[2], values[3], values[4]);
+        return new Task(values[0], values[2], values[3], values[4], values[5], values[6], values[7]);
     }
 
     public static Subtask subtaskFromCsv(String[] values, HashMap<Integer, Epic> epics) {
-        return new Subtask(values[0], values[2], values[3], values[4], epics.get(Integer.valueOf(values[5])));
+        return new Subtask(values[0], values[2], values[3], values[4], epics.get(Integer.valueOf(values[8])),
+                values[5], values[6], values[7]);
     }
 }

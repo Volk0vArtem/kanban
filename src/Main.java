@@ -4,6 +4,7 @@ import tasks.*;
 public class Main {
 
     public static void main(String[] args) {
+        /*
         TaskManager inMemoryTaskManager = Managers.getDefault();
 
 
@@ -94,5 +95,8 @@ public class Main {
             System.out.println(a);
         }
         System.out.println("Размер списка просмотренных задач: " + taskManager.getHistory().size());
+        */
     }
+
+
 }
