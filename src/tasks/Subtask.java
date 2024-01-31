@@ -36,15 +36,12 @@ public class Subtask extends AbstractTask {
         if (startTime.equals("null")){
             this.startTime = null;
             this.endTime = null;
+            this.duration = null;
         } else {
             this.startTime = LocalDateTime.parse(startTime, formatter);
-            this.endTime = LocalDateTime.parse(endTime,formatter);
+            this.endTime = LocalDateTime.parse(endTime, formatter);
+            this.duration = Duration.parse(duration);
         }
-        if (duration.equals("null")){
-            this.duration = null;
-            this.endTime = null;
-        }
-        this.duration = Duration.parse(duration);
         epic.getSubtasks().add(this);
     }
 
@@ -76,6 +73,10 @@ public class Subtask extends AbstractTask {
 
     @Override
     public String toCSV() {
+        if (startTime == null && endTime == null && duration == null){
+            return id + "," + taskType + "," + name + "," + status + "," + description + "," + startTime
+                    + "," + endTime + "," + duration + "," + epic.getId();
+        }
         return id + "," + taskType + "," + name + "," + status + "," + description + "," + startTime.format(formatter) +
                 "," + endTime.format(formatter) + "," + duration + "," + epic.getId();
     }

@@ -21,9 +21,15 @@ public class Task extends AbstractTask {
         this.status = Status.valueOf(status);
         this.description = description;
         this.taskType = TaskType.TASK;
-        this.startTime = LocalDateTime.parse(startTime, formatter);
-        this.endTime = LocalDateTime.parse(endTime, formatter);
-        this.duration = Duration.parse(duration);
+        if (startTime.equals("null")){
+            this.startTime = null;
+            this.endTime = null;
+            this.duration = null;
+        } else {
+            this.startTime = LocalDateTime.parse(startTime, formatter);
+            this.endTime = LocalDateTime.parse(endTime, formatter);
+            this.duration = Duration.parse(duration);
+        }
     }
 
     public Task(String name, String description) {

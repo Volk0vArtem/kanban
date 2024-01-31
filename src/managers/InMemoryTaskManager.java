@@ -1,9 +1,8 @@
 package managers;
 
 import tasks.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -11,6 +10,8 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Subtask> subtasks;
     protected final HashMap<Integer, Epic> epics;
     protected final HistoryManager historyManager;
+    protected final TreeSet<AbstractTask> prioritizedTasks;
+    protected final ArrayList<AbstractTask> tasksWithoutTime;
 
     public InMemoryTaskManager() {
         tasks = new HashMap<>();
@@ -18,6 +19,18 @@ public class InMemoryTaskManager implements TaskManager {
         epics = new HashMap<>();
         historyManager = Managers.getDefaultHistory();
         AbstractTask.countReset();
+        prioritizedTasks = new TreeSet<>(new Comparator<>() {
+            @Override
+            public int compare(AbstractTask o1, AbstractTask o2) {
+                if ((o1.getTaskType().equals(TaskType.EPIC) && o2.getTaskType().equals(TaskType.SUBTASK) ||
+                        o2.getTaskType().equals(TaskType.EPIC) && o1.getTaskType().equals(TaskType.SUBTASK)) &&
+                        o1.getStartTime().isEqual(o2.getStartTime())){
+                    return 1;
+                }
+                return o1.getStartTime().compareTo(o2.getStartTime());
+            }
+        });
+        tasksWithoutTime = new ArrayList<>();
     }
 
     public List<AbstractTask> getHistory() {
@@ -67,11 +80,14 @@ public class InMemoryTaskManager implements TaskManager {
         switch (taskType) {
             case TASK:
                 tasks.put(abstractTask.getId(), (Task) abstractTask);
+                addToPrioritizedTasksList(abstractTask);
                 break;
             case EPIC:
                 epics.put(abstractTask.getId(), (Epic) abstractTask);
+                addToPrioritizedTasksList(abstractTask);
                 break;
             case SUBTASK:
+                addToPrioritizedTasksList(abstractTask);
                 Subtask subtask = (Subtask) abstractTask;
                 subtasks.put(subtask.getId(), subtask);
                 break;
@@ -194,7 +210,6 @@ public class InMemoryTaskManager implements TaskManager {
                 break;
             default:
                 throw new IllegalArgumentException("Неправильно введен тип задачи");
-
         }
     }
 
@@ -236,5 +251,18 @@ public class InMemoryTaskManager implements TaskManager {
                 update(epic, id);
 
         }
+    }
+    protected void addToPrioritizedTasksList(AbstractTask task){
+        if (task.getStartTime() == null){
+            tasksWithoutTime.add(task);
+        } else {
+            prioritizedTasks.add(task);
+        }
+    }
+
+    public ArrayList<AbstractTask> getPrioritizedTasks(){
+        ArrayList<AbstractTask> pt = new ArrayList<>(prioritizedTasks);
+        pt.addAll(tasksWithoutTime);
+        return pt;
     }
 }

@@ -25,9 +25,15 @@ public class Epic extends AbstractTask {
         this.description = description;
         subtasks = new ArrayList<>();
         this.taskType = TaskType.EPIC;
-        this.startTime = LocalDateTime.parse(startTime, formatter);
-        this.endTime = LocalDateTime.parse(endTime, formatter);
-        this.duration = Duration.parse(duration);
+        if (startTime.equals("null")){
+            this.startTime = null;
+            this.endTime = null;
+            this.duration = null;
+        } else {
+            this.startTime = LocalDateTime.parse(startTime, formatter);
+            this.endTime = LocalDateTime.parse(endTime, formatter);
+            this.duration = Duration.parse(duration);
+        }
     }
 
     public Epic(String name, String description) {
@@ -51,6 +57,7 @@ public class Epic extends AbstractTask {
         LocalDateTime min = subtasks.get(0).startTime;
         LocalDateTime max = subtasks.get(0).endTime;
         for (Subtask subtask : subtasks){
+            if (min == null && max == null) continue;
             if (subtask.getStartTime().isBefore(min)){
                 min = subtask.getStartTime();
             }
