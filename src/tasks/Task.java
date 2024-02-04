@@ -37,12 +37,16 @@ public class Task extends AbstractTask {
         this.taskType = TaskType.TASK;
     }
 
+    @Override
     public String toString() {
-        return "Tasks.Task{" +
-                "name='" + name + '\'' +
+        return "Task{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
-                ", id=" + id +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", duration=" + duration +
                 '}';
     }
 }

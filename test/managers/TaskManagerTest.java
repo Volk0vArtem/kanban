@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -19,9 +21,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
     protected Subtask subtask;
 
     protected void initTasks(){
-        task = new Task("TaskName", "TaskDescription");
+        task = new Task("TaskName", "TaskDescription",
+                LocalDateTime.of(1982,01,01,15,00), Duration.ofHours(1));
         epic = new Epic("EpicName", "EpicDescription");
-        subtask = new Subtask("SubtaskName", "SubtaskDescription", epic);
+        subtask = new Subtask("SubtaskName", "SubtaskDescription", epic,
+                LocalDateTime.of(2002,01,01,15,00), Duration.ofHours(12));
         taskManager.addObjective(task, TaskType.TASK);
         taskManager.addObjective(epic, TaskType.EPIC);
         taskManager.addObjective(subtask, TaskType.SUBTASK);
@@ -143,9 +147,42 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(history, taskManager.getHistory());
     }
 
+    @Test
+    void getPrioritizedTasks(){
+        ArrayList<AbstractTask> result = new ArrayList<>();
+        result.add(task);
+        result.add(epic);
+        result.add(subtask);
+        assertEquals(result, taskManager.getPrioritizedTasks());
+        Task task1 = new Task("TaskName", "TaskDescription",
+                LocalDateTime.of(2002,01,01,16,30), Duration.ofHours(20));
+        taskManager.addObjective(task1, TaskType.TASK);
+        assertEquals(result, taskManager.getPrioritizedTasks());
+        Task task2 = new Task("name", "description");
+        taskManager.addObjective(task2, TaskType.TASK);
+        result.add(task2);
+        assertEquals(result, taskManager.getPrioritizedTasks());
+    }
 
+    @Test
+    void getEpicEndTime(){
+        Subtask subtask1 = new Subtask("name", "description", epic,
+                LocalDateTime.of(1990, 9,20,11,0), Duration.ofHours(14));
+        Subtask subtask2 = new Subtask("name", "description", epic,
+                LocalDateTime.of(2003, 11,17,22,0), Duration.ofHours(100));
+        taskManager.addObjective(subtask1, TaskType.SUBTASK);
+        taskManager.addObjective(subtask2, TaskType.SUBTASK);
+        ArrayList<AbstractTask> result = new ArrayList<>();
+        result.add(task);
+        result.add(epic);
+        result.add(subtask1);
+        result.add(subtask);
+        result.add(subtask2);
+        assertEquals(result, taskManager.getPrioritizedTasks());
+        assertEquals(subtask1.getStartTime(), epic.getStartTime());
+        assertEquals(subtask2.getEndTime(), epic.getEndTime());
 
-    // TODO: 19.01.2024 LocalDateTime getLastEndTime ,  void getPrioritizedTasks
+    }
 
 
 

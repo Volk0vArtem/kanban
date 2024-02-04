@@ -31,6 +31,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         Assertions.assertEquals(taskManager.getEpics(), newManager.getEpics());
         Assertions.assertEquals(taskManager.getSubtasks(), newManager.getSubtasks());
         Assertions.assertEquals(taskManager.getHistory(), newManager.getHistory());
+        Assertions.assertEquals(taskManager.getPrioritizedTasks(), newManager.getPrioritizedTasks());
     }
 
     @Test
@@ -51,5 +52,4 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         assertEquals(newTaskManager.getSubtasks(), load.getSubtasks());
         assertEquals(newTaskManager.getHistory(), load.getHistory());
     }
-
 }

@@ -1,5 +1,6 @@
 package managers;
 
+import exceptions.TimeIntersectException;
 import tasks.*;
 
 import java.util.ArrayList;
@@ -30,4 +31,8 @@ public interface TaskManager {
 
     ArrayList<Subtask> getSubtasksByEpic(int epicId);
     List<AbstractTask> getHistory();
+
+    void addToPrioritizedTasksList(AbstractTask task) throws TimeIntersectException;
+
+    ArrayList<AbstractTask> getPrioritizedTasks();
 }

@@ -1,6 +1,7 @@
 package utils;
 
 import managers.HistoryManager;
+import managers.TaskManager;
 import tasks.*;
 
 import java.util.ArrayList;
@@ -23,17 +24,30 @@ public class CSVFormat {
         return sb.toString();
     }
 
-    public static List<Integer> historyListFromString(String history) {
-        ArrayList<Integer> historyList = new ArrayList<>();
+    public static String prioritizedTasksToCsv(TaskManager manager) {
+        if (manager.getPrioritizedTasks().isEmpty()) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (AbstractTask task : manager.getPrioritizedTasks()) {
+            sb.append(task.getId());
+            sb.append(",");
+        }
+        sb.deleteCharAt(sb.lastIndexOf(","));
+        return sb.toString();
+    }
+
+    public static List<Integer> idListFromString(String history) {
+        ArrayList<Integer> idList = new ArrayList<>();
         if (history.equals("")) {
-            return historyList;
+            return idList;
         }
         String[] values = history.split(",");
         for (int i = values.length - 1; i >= 0; i--) {
-            historyList.add(Integer.valueOf(values[i]));
+            idList.add(Integer.valueOf(values[i]));
         }
-        return historyList;
-
+        return idList;
     }
 
     public static Epic epicFromCsv(String[] values) {

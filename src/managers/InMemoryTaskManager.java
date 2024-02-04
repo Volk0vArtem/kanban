@@ -1,5 +1,6 @@
 package managers;
 
+import exceptions.TimeIntersectException;
 import tasks.*;
 
 import java.util.*;
@@ -79,15 +80,31 @@ public class InMemoryTaskManager implements TaskManager {
     public void addObjective(AbstractTask abstractTask, TaskType taskType) {
         switch (taskType) {
             case TASK:
+                try {
+                    addToPrioritizedTasksList(abstractTask);
+                } catch (TimeIntersectException e){
+                    System.out.println(e.getMessage());
+                    return;
+                }
                 tasks.put(abstractTask.getId(), (Task) abstractTask);
-                addToPrioritizedTasksList(abstractTask);
                 break;
             case EPIC:
+                try {
+                    addToPrioritizedTasksList(abstractTask);
+                } catch (TimeIntersectException e){
+                    System.out.println(e.getMessage());
+                    return;
+                }
                 epics.put(abstractTask.getId(), (Epic) abstractTask);
-                addToPrioritizedTasksList(abstractTask);
                 break;
             case SUBTASK:
-                addToPrioritizedTasksList(abstractTask);
+                try {
+                    addToPrioritizedTasksList(abstractTask);
+                } catch (TimeIntersectException e){
+                    System.out.println(e.getMessage());
+                    ((Subtask) abstractTask).getEpic().getSubtasks().remove(abstractTask); // TODO: 04.02.2024  
+                    return;
+                }
                 Subtask subtask = (Subtask) abstractTask;
                 subtasks.put(subtask.getId(), subtask);
                 break;
@@ -252,14 +269,30 @@ public class InMemoryTaskManager implements TaskManager {
 
         }
     }
-    protected void addToPrioritizedTasksList(AbstractTask task){
+    @Override
+    public void addToPrioritizedTasksList(AbstractTask task) throws TimeIntersectException {
         if (task.getStartTime() == null){
             tasksWithoutTime.add(task);
         } else {
+            for (AbstractTask abstractTask : prioritizedTasks){
+                if (task.getStartTime().isAfter(abstractTask.getStartTime()) &&
+                    task.getStartTime().isBefore(abstractTask.getEndTime()) ||
+                    task.getEndTime().isAfter(abstractTask.getStartTime()) &&
+                    task.getEndTime().isBefore(abstractTask.getEndTime()) &&
+                    task.getStartTime().isBefore(abstractTask.getStartTime()) &&
+                    task.getEndTime().isAfter(abstractTask.getEndTime())) {
+
+                    if (task.getTaskType().equals(TaskType.SUBTASK)){
+                        if (((Subtask) task).getEpic().getId() == abstractTask.getId()) continue;
+                    }
+                    throw new TimeIntersectException("Задача пересекается по времени с задачей " + abstractTask.getId());
+                }
+            }
             prioritizedTasks.add(task);
         }
     }
 
+    @Override
     public ArrayList<AbstractTask> getPrioritizedTasks(){
         ArrayList<AbstractTask> pt = new ArrayList<>(prioritizedTasks);
         pt.addAll(tasksWithoutTime);

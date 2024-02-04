@@ -62,12 +62,15 @@ public class Subtask extends AbstractTask {
 
     @Override
     public String toString() {
-        return "Tasks.Subtask{" +
-                "name='" + name + '\'' +
+        return "Subtask{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", epic='" + epic.getName() + '\'' +
                 ", status=" + status +
-                ", id=" + id +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", duration=" + duration +
+                ", epic=" + epic.getId() +
                 '}';
     }
 

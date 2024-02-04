@@ -2,14 +2,15 @@ package managers;
 
 import exceptions.ManagerLoadException;
 import exceptions.ManagerSaveException;
+import exceptions.TimeIntersectException;
 import tasks.*;
 import utils.CSVFormat;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
@@ -47,6 +48,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
             bw.newLine();
             bw.write(CSVFormat.historyToString(historyManager));
+            bw.newLine();
+            bw.write(CSVFormat.prioritizedTasksToCsv(this));
 
         } catch (IOException e){
             throw new ManagerSaveException("Can't save to file: " + file.getName());
@@ -62,10 +65,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
             for (int i = 1; i < lines.length; i++){
                 if (lines[i].isEmpty()){
-                    List<Integer> historyCsv = CSVFormat.historyListFromString(lines[i+1]);
+                    List<Integer> historyCsv = CSVFormat.idListFromString(lines[i+1]);
                     HistoryManager historyManager = manager.getHistoryManager();
                     for (Integer id : historyCsv){
                         historyManager.addToHistory(manager.getById(id));
+                    }
+
+                    List<Integer> prioritizedCsv = CSVFormat.idListFromString(lines[i+2]);
+                    for (int j = prioritizedCsv.size()-1; j >= 0; j--) {
+                        try {
+                            manager.addToPrioritizedTasksList(manager.getById(prioritizedCsv.get(j)));
+                        } catch (TimeIntersectException e){
+                            System.out.println(e.getMessage());
+                        }
                     }
                     break;
                 }
@@ -138,58 +150,29 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
 
-        /*
-        Epic epic = new Epic("new Epic", "Новый Эпик");
-        FileBackedTasksManager fileManager = new FileBackedTasksManager(new File("saveTasks2.csv"));
-        fileManager.addObjective(epic, TaskType.EPIC);
-        fileManager.addObjective(new Task("task1", "Купить автомобиль"), TaskType.TASK);
-        fileManager.addObjective(new Epic("new Epic2", "Новый Эпик2"), TaskType.EPIC);
-        fileManager.addObjective(new Subtask("New Subtask", "Подзадача", (Epic) fileManager.getById(0, TaskType.EPIC)), TaskType.SUBTASK);
-        fileManager.addObjective(new Subtask("New Subtask2", "Подзадача2", (Epic) fileManager.getById(0, TaskType.EPIC)), TaskType.SUBTASK);
-        fileManager.getById(1, TaskType.TASK);
-        fileManager.getById(2, TaskType.EPIC);
-        fileManager.getById(3, TaskType.SUBTASK);
-        System.out.println(fileManager.getTasks());
-        System.out.println(fileManager.getEpics());
-        System.out.println(fileManager.getSubtasks());
-        System.out.println(fileManager.getHistory());
-        System.out.println("\n\n" + "new" + "\n\n");
-        FileBackedTasksManager fileBackedTasksManager = loadFromFile(new File("saveTasks2.csv"));
-        System.out.println(fileBackedTasksManager.getTasks());
-        System.out.println(fileBackedTasksManager.getEpics());
-        System.out.println(fileBackedTasksManager.getSubtasks());
-        System.out.println(fileBackedTasksManager.getHistory());
-
-
-         */
         FileBackedTasksManager manager = new FileBackedTasksManager(new File("saveTasks2.csv"));
 
-        Task task1 = new Task("task1", "0",
-                LocalDateTime.of(2001,1,1,10,0),Duration.ofHours(2));
-        Task task2 = new Task("task2", "1",
-                LocalDateTime.of(2000, 3,14,7,0), Duration.ofHours(3));
-        Epic epic1 = new Epic("epic1", "2");
-        Task task3 = new Task("task3", "3");
-        Subtask subtask1 = new Subtask("subtask1", "4", epic1,
-                LocalDateTime.of(1990,9,10,11,0), Duration.ofHours(3));
+        Task task1 = new Task("TaskName", "TaskDescription",
+                LocalDateTime.of(2000,01,01,15,00), Duration.ofHours(1));
+        Epic epic1 = new Epic("EpicName", "EpicDescription");
+        Subtask subtask1 = new Subtask("SubtaskName", "SubtaskDescription", epic1,
+                LocalDateTime.of(2002,01,01,15,00), Duration.ofHours(1));
         Subtask subtask2 = new Subtask("subtask2", "5", epic1,
-                LocalDateTime.of(1980,9,10,11,0), Duration.ofHours(3));
-        Subtask subtask3 = new Subtask("subtask3", "6", epic1,
-                LocalDateTime.of(1992,9,10,11,0), Duration.ofHours(3));
-
-
-        //System.out.println(manager.getPrioritizedTasks().size() + "\n");
+                LocalDateTime.of(2001,1,1,11,0), Duration.ofHours(3));
+//        Task task2 = new Task("TaskName", "TaskDescription",
+//                LocalDateTime.of(2000,01,01,15,30), Duration.ofHours(20));
 
         manager.addObjective(task1, TaskType.TASK);
-        //System.out.println(manager.getPrioritizedTasks().size() + "\n");
-        manager.addObjective(task3, TaskType.TASK);
         manager.addObjective(epic1, TaskType.EPIC);
-        manager.addObjective(task2, TaskType.TASK);
         manager.addObjective(subtask1, TaskType.SUBTASK);
         manager.addObjective(subtask2, TaskType.SUBTASK);
-        manager.addObjective(subtask3, TaskType.SUBTASK);
+        //manager.addObjective(task2, TaskType.TASK);
 
         manager.getPrioritizedTasks().forEach(System.out::println);
+
+        System.out.println("\n\n");
+        TaskManager manager1 = FileBackedTasksManager.loadFromFile(new File("saveTasks2.csv"));
+        manager1.getPrioritizedTasks().forEach(System.out::println);
 
         }
 }
