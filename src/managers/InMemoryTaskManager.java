@@ -13,6 +13,14 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HistoryManager historyManager;
     protected final TreeSet<AbstractTask> prioritizedTasks;
     protected final ArrayList<AbstractTask> tasksWithoutTime;
+    protected Comparator<AbstractTask> comparator = (o1, o2) -> {
+        if ((o1.getTaskType().equals(TaskType.EPIC) && o2.getTaskType().equals(TaskType.SUBTASK) ||
+                o2.getTaskType().equals(TaskType.EPIC) && o1.getTaskType().equals(TaskType.SUBTASK)) &&
+                o1.getStartTime().isEqual(o2.getStartTime())){
+            return 1;
+        }
+        return o1.getStartTime().compareTo(o2.getStartTime());
+    };
 
     public InMemoryTaskManager() {
         tasks = new HashMap<>();
@@ -20,14 +28,7 @@ public class InMemoryTaskManager implements TaskManager {
         epics = new HashMap<>();
         historyManager = Managers.getDefaultHistory();
         AbstractTask.countReset();
-        prioritizedTasks = new TreeSet<>((o1, o2) -> {
-            if ((o1.getTaskType().equals(TaskType.EPIC) && o2.getTaskType().equals(TaskType.SUBTASK) ||
-                    o2.getTaskType().equals(TaskType.EPIC) && o1.getTaskType().equals(TaskType.SUBTASK)) &&
-                    o1.getStartTime().isEqual(o2.getStartTime())){
-                return 1;
-            }
-            return o1.getStartTime().compareTo(o2.getStartTime());
-        });
+        prioritizedTasks = new TreeSet<>(comparator);
         tasksWithoutTime = new ArrayList<>();
     }
 
