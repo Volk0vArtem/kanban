@@ -39,14 +39,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void addNewEpic() {
         Epic newEpic = new Epic("name", "description");
         taskManager.addObjective(newEpic, TaskType.EPIC);
-        assertEquals(newEpic, taskManager.getById(3));
+        assertEquals(newEpic, taskManager.getById(3, TaskType.EPIC));
     }
 
     @Test
     void addNewSubtask() {
         Subtask newSubtask = new Subtask("name", "description", epic);
         taskManager.addObjective(newSubtask, TaskType.SUBTASK);
-        assertEquals(newSubtask, taskManager.getById(3));
+        assertEquals(newSubtask, taskManager.getById(3, TaskType.SUBTASK));
     }
 
     @Test
@@ -123,7 +123,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getEpic() {
-        assertEquals(epic, taskManager.getById(1));
+        assertEquals(epic, taskManager.getById(1, TaskType.EPIC));
     }
 
     @Test
@@ -198,7 +198,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getSubtask() {
-        assertEquals(subtask, taskManager.getById(2));
+        assertEquals(subtask, taskManager.getById(2, TaskType.SUBTASK));
     }
 
     @Test
@@ -213,7 +213,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getTask() {
-        assertEquals(task, taskManager.getById(0));
+        assertEquals(task, taskManager.getById(0, TaskType.TASK));
     }
 
     @Test
@@ -230,21 +230,21 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void updateEpic() {
         Epic updatedEpic = new Epic("newEpic", "updatedEpic");
         taskManager.update(updatedEpic, 1);
-        assertEquals(updatedEpic, taskManager.getById(1));
+        assertEquals(updatedEpic, taskManager.getById(1, TaskType.EPIC));
     }
 
     @Test
     void updateSubtask() {
         Subtask updatedSubtask = new Subtask("newSubtask", "updatedSubtask", epic);
         taskManager.addObjective(updatedSubtask, TaskType.SUBTASK);
-        assertEquals(updatedSubtask, taskManager.getById(3));
+        assertEquals(updatedSubtask, taskManager.getById(3, TaskType.SUBTASK));
     }
 
     @Test
     void updateTask() {
         Task updatedTask = new Task("newTask", "updatedTask");
         taskManager.addObjective(updatedTask, TaskType.TASK);
-        assertEquals(updatedTask, taskManager.getById(3));
+        assertEquals(updatedTask, taskManager.getById(3, TaskType.TASK));
     }
 
 }

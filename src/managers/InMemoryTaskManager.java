@@ -128,7 +128,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    public AbstractTask getById(int id) {
+    protected AbstractTask getByIdWithoutAddingToHistory(int id) {
         for (Integer i : tasks.keySet()) {
             if (i == id) {
                 return tasks.get(id);
@@ -266,7 +266,7 @@ public class InMemoryTaskManager implements TaskManager {
         return epic.getSubtasks();
     }
 
-    protected void checkEpicStatus(int id) {
+    private void checkEpicStatus(int id) {
         Epic epic = epics.get(id);
         int inProgress = 0;
         int done = 0;
@@ -327,7 +327,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
     @Override
     public void removeFromPrioritizedList(int id){
-        AbstractTask task = this.getById(id);
+        AbstractTask task = this.getByIdWithoutAddingToHistory(id);
         if (!getPrioritizedTasks().contains(task)) return;
         if (!tasksWithoutTime.remove(task)) {
             prioritizedTasks.remove(task);
