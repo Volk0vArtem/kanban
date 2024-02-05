@@ -65,13 +65,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     List<Integer> historyCsv = CSVFormat.idListFromString(lines[i+1]);
                     HistoryManager historyManager = manager.getHistoryManager();
                     for (Integer id : historyCsv){
-                        historyManager.addToHistory(manager.getById(id));
+                        historyManager.addToHistory(manager.getByIdWithoutAddingToHistory(id));
                     }
 
                     List<Integer> prioritizedCsv = CSVFormat.idListFromString(lines[i+2]);
                     for (int j = prioritizedCsv.size()-1; j >= 0; j--) {
                         try {
-                            manager.addToPrioritizedTasksList(manager.getById(prioritizedCsv.get(j)));
+                            manager.addToPrioritizedTasksList(manager.getByIdWithoutAddingToHistory(prioritizedCsv.get(j)));
                         } catch (TimeIntersectException e){
                             System.out.println(e.getMessage());
                         }
