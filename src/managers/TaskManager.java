@@ -35,4 +35,5 @@ public interface TaskManager {
     void addToPrioritizedTasksList(AbstractTask task) throws TimeIntersectException;
 
     ArrayList<AbstractTask> getPrioritizedTasks();
+    void removeFromPrioritizedList(int id);
 }

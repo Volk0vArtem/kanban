@@ -20,16 +20,13 @@ public class InMemoryTaskManager implements TaskManager {
         epics = new HashMap<>();
         historyManager = Managers.getDefaultHistory();
         AbstractTask.countReset();
-        prioritizedTasks = new TreeSet<>(new Comparator<>() {
-            @Override
-            public int compare(AbstractTask o1, AbstractTask o2) {
-                if ((o1.getTaskType().equals(TaskType.EPIC) && o2.getTaskType().equals(TaskType.SUBTASK) ||
-                        o2.getTaskType().equals(TaskType.EPIC) && o1.getTaskType().equals(TaskType.SUBTASK)) &&
-                        o1.getStartTime().isEqual(o2.getStartTime())){
-                    return 1;
-                }
-                return o1.getStartTime().compareTo(o2.getStartTime());
+        prioritizedTasks = new TreeSet<>((o1, o2) -> {
+            if ((o1.getTaskType().equals(TaskType.EPIC) && o2.getTaskType().equals(TaskType.SUBTASK) ||
+                    o2.getTaskType().equals(TaskType.EPIC) && o1.getTaskType().equals(TaskType.SUBTASK)) &&
+                    o1.getStartTime().isEqual(o2.getStartTime())){
+                return 1;
             }
+            return o1.getStartTime().compareTo(o2.getStartTime());
         });
         tasksWithoutTime = new ArrayList<>();
     }
@@ -102,7 +99,7 @@ public class InMemoryTaskManager implements TaskManager {
                     addToPrioritizedTasksList(abstractTask);
                 } catch (TimeIntersectException e){
                     System.out.println(e.getMessage());
-                    ((Subtask) abstractTask).getEpic().getSubtasks().remove(abstractTask); // TODO: 04.02.2024  
+                    ((Subtask) abstractTask).getEpic().getSubtasks().remove(abstractTask);
                     return;
                 }
                 Subtask subtask = (Subtask) abstractTask;
@@ -160,6 +157,13 @@ public class InMemoryTaskManager implements TaskManager {
                     System.out.println("Задача не найдена");
                     return;
                 }
+                removeFromPrioritizedList(id);
+                abstractTask.setId(id);
+                try{
+                    addToPrioritizedTasksList(abstractTask);
+                } catch (TimeIntersectException e){
+                    System.out.println(e.getMessage());
+                }
                 tasks.put(id, (Task) abstractTask);
                 break;
             case EPIC:
@@ -167,16 +171,32 @@ public class InMemoryTaskManager implements TaskManager {
                     System.out.println("Эпик не найден");
                     return;
                 }
+                removeFromPrioritizedList(id);
+                abstractTask.setId(id);
+                try{
+                    addToPrioritizedTasksList(abstractTask);
+                } catch (TimeIntersectException e){
+                    System.out.println(e.getMessage());
+                }
                 epics.put(id, (Epic) abstractTask);
+                ((Epic) abstractTask).findEndTime();
                 break;
             case SUBTASK:
                 if (!subtasks.containsKey(id)) {
                     System.out.println("Подзадача не найдена");
                     return;
                 }
+                removeFromPrioritizedList(id);
+                abstractTask.setId(id);
+                try{
+                    addToPrioritizedTasksList(abstractTask);
+                } catch (TimeIntersectException e){
+                    System.out.println(e.getMessage());
+                }
                 Subtask subtask = (Subtask) abstractTask;
                 subtasks.put(id, subtask);
                 checkEpicStatus(subtask.getEpic().getId());
+                subtask.getEpic().findEndTime();
                 break;
             default:
                 throw new IllegalArgumentException("Неправильно введен тип задачи");
@@ -191,6 +211,7 @@ public class InMemoryTaskManager implements TaskManager {
                     System.out.println("Задача не найдена");
                     return;
                 }
+                removeFromPrioritizedList(id);
                 historyManager.remove(id);
                 tasks.remove(id);
                 break;
@@ -205,6 +226,7 @@ public class InMemoryTaskManager implements TaskManager {
                     for (int subId : subtasks.keySet()) {
                         if (subtasks.get(subId).getEpic().equals(epic)) {
                             historyManager.remove(subId);
+                            removeFromPrioritizedList(subId);
                             subs.add(subId);
                         }
                     }
@@ -212,6 +234,7 @@ public class InMemoryTaskManager implements TaskManager {
                 for (Integer i : subs) {
                     subtasks.remove(i);
                 }
+                removeFromPrioritizedList(id);
                 historyManager.remove(id);
                 epics.remove(id);
                 break;
@@ -220,10 +243,13 @@ public class InMemoryTaskManager implements TaskManager {
                     System.out.println("Подзадача не найдена");
                     return;
                 }
-                int epicId = subtasks.get(id).getEpic().getId();
+                Epic epic1 = subtasks.get(id).getEpic();
+                removeFromPrioritizedList(id);
                 historyManager.remove(id);
+                epic1.getSubtasks().remove(subtasks.get(id));
                 subtasks.remove(id);
-                checkEpicStatus(epicId);
+                checkEpicStatus(epic1.getId());
+                epic1.findEndTime();
                 break;
             default:
                 throw new IllegalArgumentException("Неправильно введен тип задачи");
@@ -297,5 +323,13 @@ public class InMemoryTaskManager implements TaskManager {
         ArrayList<AbstractTask> pt = new ArrayList<>(prioritizedTasks);
         pt.addAll(tasksWithoutTime);
         return pt;
+    }
+    @Override
+    public void removeFromPrioritizedList(int id){
+        AbstractTask task = this.getById(id);
+        if (!getPrioritizedTasks().contains(task)) return;
+        if (!tasksWithoutTime.remove(task)) {
+            prioritizedTasks.remove(task);
+        }
     }
 }

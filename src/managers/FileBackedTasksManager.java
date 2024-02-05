@@ -8,9 +8,6 @@ import utils.CSVFormat;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.sql.Time;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
@@ -149,30 +146,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static void main(String[] args) {
-
-        FileBackedTasksManager manager = new FileBackedTasksManager(new File("saveTasks2.csv"));
-
-        Task task1 = new Task("TaskName", "TaskDescription",
-                LocalDateTime.of(2000,01,01,15,00), Duration.ofHours(1));
-        Epic epic1 = new Epic("EpicName", "EpicDescription");
-        Subtask subtask1 = new Subtask("SubtaskName", "SubtaskDescription", epic1,
-                LocalDateTime.of(2002,01,01,15,00), Duration.ofHours(1));
-        Subtask subtask2 = new Subtask("subtask2", "5", epic1,
-                LocalDateTime.of(2001,1,1,11,0), Duration.ofHours(3));
-//        Task task2 = new Task("TaskName", "TaskDescription",
-//                LocalDateTime.of(2000,01,01,15,30), Duration.ofHours(20));
-
-        manager.addObjective(task1, TaskType.TASK);
-        manager.addObjective(epic1, TaskType.EPIC);
-        manager.addObjective(subtask1, TaskType.SUBTASK);
-        manager.addObjective(subtask2, TaskType.SUBTASK);
-        //manager.addObjective(task2, TaskType.TASK);
-
-        manager.getPrioritizedTasks().forEach(System.out::println);
-
-        System.out.println("\n\n");
-        TaskManager manager1 = FileBackedTasksManager.loadFromFile(new File("saveTasks2.csv"));
-        manager1.getPrioritizedTasks().forEach(System.out::println);
 
         }
 }

@@ -1,7 +1,5 @@
 package managers;
 
-import managers.TaskManager;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.*;
@@ -22,10 +20,10 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     protected void initTasks(){
         task = new Task("TaskName", "TaskDescription",
-                LocalDateTime.of(1982,01,01,15,00), Duration.ofHours(1));
+                LocalDateTime.of(1982,1,1,15,0), Duration.ofHours(1));
         epic = new Epic("EpicName", "EpicDescription");
         subtask = new Subtask("SubtaskName", "SubtaskDescription", epic,
-                LocalDateTime.of(2002,01,01,15,00), Duration.ofHours(12));
+                LocalDateTime.of(2002,1,1,15,0), Duration.ofHours(12));
         taskManager.addObjective(task, TaskType.TASK);
         taskManager.addObjective(epic, TaskType.EPIC);
         taskManager.addObjective(subtask, TaskType.SUBTASK);
@@ -42,7 +40,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Epic newEpic = new Epic("name", "description");
         taskManager.addObjective(newEpic, TaskType.EPIC);
         assertEquals(newEpic, taskManager.getById(3));
-
     }
 
     @Test
@@ -65,6 +62,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(0, taskManager.getEpics().size());
         assertEquals(0, taskManager.getSubtasks().size());
         assertEquals(1, taskManager.getTasks().size());
+        assertEquals(1, taskManager.getPrioritizedTasks().size());
     }
 
     @Test
@@ -73,6 +71,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(1, taskManager.getEpics().size());
         assertEquals(0, taskManager.getSubtasks().size());
         assertEquals(1, taskManager.getTasks().size());
+        assertEquals(2, taskManager.getPrioritizedTasks().size());
     }
 
     @Test
@@ -81,6 +80,19 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(1, taskManager.getEpics().size());
         assertEquals(1, taskManager.getSubtasks().size());
         assertEquals(0, taskManager.getTasks().size());
+        assertEquals(2, taskManager.getPrioritizedTasks().size());
+    }
+
+    @Test
+    void updatePrioritizedList(){
+        Task newTask = new Task("updatedTask", "2030",
+                LocalDateTime.of(2030, 9,12, 10,0), Duration.ofHours(10));
+        taskManager.update(newTask,0);
+        ArrayList<AbstractTask> result = new ArrayList<>();
+        result.add(epic);
+        result.add(subtask);
+        result.add(newTask);
+        assertEquals(result, taskManager.getPrioritizedTasks());
     }
 
     @Test
@@ -155,7 +167,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         result.add(subtask);
         assertEquals(result, taskManager.getPrioritizedTasks());
         Task task1 = new Task("TaskName", "TaskDescription",
-                LocalDateTime.of(2002,01,01,16,30), Duration.ofHours(20));
+                LocalDateTime.of(2002,1,1,16,30), Duration.ofHours(20));
         taskManager.addObjective(task1, TaskType.TASK);
         assertEquals(result, taskManager.getPrioritizedTasks());
         Task task2 = new Task("name", "description");
@@ -183,8 +195,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(subtask2.getEndTime(), epic.getEndTime());
 
     }
-
-
 
     @Test
     void getSubtask() {

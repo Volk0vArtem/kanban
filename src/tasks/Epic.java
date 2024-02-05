@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class Epic extends AbstractTask {
 
-    private ArrayList<Subtask> subtasks;
+    private final ArrayList<Subtask> subtasks;
 
     public Epic(String id, String name, String status, String description){
         this.id = Integer.parseInt(id);
@@ -51,11 +51,12 @@ public class Epic extends AbstractTask {
     }
 
     public void findEndTime(){
-        if (subtasks.size() == 0){
+        if (subtasks.size() == 0 || ((subtasks.get(0).getStartTime() == null) &&
+                (subtasks.get(0).getEndTime() == null) )){
             return;
         }
-        LocalDateTime min = subtasks.get(0).startTime;
-        LocalDateTime max = subtasks.get(0).endTime;
+        LocalDateTime min = subtasks.get(0).getStartTime();
+        LocalDateTime max = subtasks.get(0).getEndTime();
         for (Subtask subtask : subtasks){
             if (min == null && max == null) continue;
             if (subtask.getStartTime().isBefore(min)){
@@ -65,9 +66,11 @@ public class Epic extends AbstractTask {
                 max = subtask.getEndTime();
             }
         }
-        this.duration = Duration.between(min,max);
-        this.startTime = min;
-        this.endTime = max;
+        if (!(min == null) && !(max == null)) {
+            this.duration = Duration.between(min, max);
+            this.startTime = min;
+            this.endTime = max;
+        }
     }
 
     @Override
