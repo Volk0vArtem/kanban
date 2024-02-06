@@ -302,17 +302,20 @@ public class InMemoryTaskManager implements TaskManager {
             tasksWithoutTime.add(task);
         } else {
             for (AbstractTask abstractTask : prioritizedTasks){
-                if (task.getStartTime().isAfter(abstractTask.getStartTime()) &&
-                    task.getStartTime().isBefore(abstractTask.getEndTime()) ||
-                    task.getEndTime().isAfter(abstractTask.getStartTime()) &&
-                    task.getEndTime().isBefore(abstractTask.getEndTime()) &&
-                    task.getStartTime().isBefore(abstractTask.getStartTime()) &&
-                    task.getEndTime().isAfter(abstractTask.getEndTime())) {
+                if (
+                        task.getStartTime().isAfter(abstractTask.getStartTime()) &&
+                        task.getStartTime().isBefore(abstractTask.getEndTime()) ||
+                        task.getEndTime().isBefore(abstractTask.getEndTime()) &&
+                        task.getEndTime().isAfter(abstractTask.getStartTime()) ||
+                        task.getStartTime().isBefore(abstractTask.getStartTime()) &&
+                        task.getEndTime().isAfter((abstractTask.getEndTime()))
+                ) {
 
                     if (task.getTaskType().equals(TaskType.SUBTASK)){
                         if (((Subtask) task).getEpic().getId() == abstractTask.getId()) continue;
                     }
-                    throw new TimeIntersectException("Задача пересекается по времени с задачей " + abstractTask.getId());
+                    throw new TimeIntersectException("\nЗадача пересекается по времени с задачей " +
+                            abstractTask.getId() +"\n");
                 }
             }
             prioritizedTasks.add(task);
