@@ -4,6 +4,7 @@ import managers.HistoryManager;
 import managers.InMemoryHistoryManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tasks.AbstractTask;
 import tasks.Epic;
 import tasks.Task;
 
@@ -17,11 +18,11 @@ class InMemoryHistoryManagerTest {
 
     @BeforeEach
     void setUp(){
+        AbstractTask.countReset();
         historyManager = new InMemoryHistoryManager();
         epic = new Epic("task", "0");
         task1 = new Task("task", "1");
         task2 = new Task("task", "2");
-
     }
 
     @Test
@@ -56,7 +57,7 @@ class InMemoryHistoryManagerTest {
         historyManager.addToHistory(task2);
 
         historyManager.remove(2);
-        assertEquals(2, historyManager.getHistory().size(), "Задача не удалилась изз начала");
+        assertEquals(2, historyManager.getHistory().size(), "Задача не удалилась из начала");
         assertEquals(epic, historyManager.getHistory().get(1), "Задачи не совпадают");
         assertEquals(task1, historyManager.getHistory().get(0), "Задачи не совпадают");
 
