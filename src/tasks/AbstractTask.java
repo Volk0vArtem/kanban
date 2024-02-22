@@ -16,7 +16,7 @@ public abstract class AbstractTask {
     protected LocalDateTime startTime;
     protected LocalDateTime endTime;
     protected Duration duration;
-    protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd_MM_yyyy|HH:mm");
+    protected static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd_MM_yyyy|HH:mm");
 
     public AbstractTask(){}
 
