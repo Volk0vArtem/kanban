@@ -8,6 +8,8 @@ import utils.CSVFormat;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
@@ -146,6 +148,33 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static void main(String[] args) {
+
+        FileBackedTasksManager manager = new FileBackedTasksManager(new File("saveTasks2.csv"));
+
+        Task task1 = new Task("0", "TaskDescription",
+                LocalDateTime.of(2000,01,01,15,00), Duration.ofHours(1));
+        Task task2 = new Task("0", "TaskDescription",
+                LocalDateTime.of(2222,01,01,15,00), Duration.ofHours(1));
+        Epic epic1 = new Epic("1", "EpicDescription");
+
+        Subtask subtask1 = new Subtask("subtask1", "2", epic1,
+                LocalDateTime.of(2002,01,01,15,00), Duration.ofHours(1));
+        Subtask subtask2 = new Subtask("subtask2", "3", epic1,
+                LocalDateTime.of(2002,1,1,18,0), Duration.ofHours(3));
+
+
+        manager.addObjective(task1, TaskType.TASK);
+        manager.addObjective(task2, TaskType.TASK);
+        manager.addObjective(epic1, TaskType.EPIC);
+        manager.addObjective(subtask1, TaskType.SUBTASK);
+        manager.addObjective(subtask2, TaskType.SUBTASK);
+        manager.getById(0,TaskType.TASK);
+        manager.getById(2,TaskType.EPIC);
+        manager.getById(3, TaskType.SUBTASK);
+
+        System.out.println(manager.getSubtasksByEpic(2));
+
+        //System.out.println(epic1);
 
         }
 }

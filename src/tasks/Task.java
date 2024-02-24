@@ -13,8 +13,7 @@ public class Task extends AbstractTask {
         this.endTime = startTime.plus(duration);
     }
 
-    public Task(String id, String name, String status, String description, String startTime,
-                String endTime, String duration){
+    public Task(String id, String name, String status, String description, String startTime, String duration){
         this.id = Integer.parseInt(id);
         this.name = name;
         this.status = Status.valueOf(status);
@@ -26,8 +25,8 @@ public class Task extends AbstractTask {
             this.duration = null;
         } else {
             this.startTime = LocalDateTime.parse(startTime, formatter);
-            this.endTime = LocalDateTime.parse(endTime, formatter);
             this.duration = Duration.parse(duration);
+            this.endTime = this.startTime.plus(this.duration);
         }
     }
 
