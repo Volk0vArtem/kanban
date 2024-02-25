@@ -243,7 +243,9 @@ public class TasksHandler implements HttpHandler {
 //        Gson gson = new Gson();
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
-                .registerTypeAdapter(Epic.class, AbstractTaskSerializer.getA())
+                .registerTypeAdapter(Epic.class, AbstractTaskSerializer.getEpicSerializer())
+                .registerTypeAdapter(Task.class, AbstractTaskSerializer.getTaskSerializer())
+                .registerTypeAdapter(Subtask.class, AbstractTaskSerializer.getSubtaskSerializer())
                 .create();
         writeResponse(exchange, gson.toJson(manager.getHistory()), 200);
     }
@@ -251,7 +253,9 @@ public class TasksHandler implements HttpHandler {
     private void handleGetPrioritized(HttpExchange exchange) throws IOException {
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
-                .registerTypeAdapter(Epic.class, AbstractTaskSerializer.getA())
+                .registerTypeAdapter(Epic.class, AbstractTaskSerializer.getEpicSerializer())
+                .registerTypeAdapter(Task.class, AbstractTaskSerializer.getTaskSerializer())
+                .registerTypeAdapter(Subtask.class, AbstractTaskSerializer.getSubtaskSerializer())
                 .create();
         writeResponse(exchange, gson.toJson(manager.getPrioritizedTasks()), 200);
     }

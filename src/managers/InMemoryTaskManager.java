@@ -36,6 +36,12 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
+    public void setHistory(List<Integer> history) {
+        for (int i = history.size()-1; i >= 0; i--){
+            historyManager.addToHistory(getByIdWithoutAddingToHistory(history.get(i)));
+        }
+    }
+
     public HistoryManager getHistoryManager() {
         return historyManager;
     }

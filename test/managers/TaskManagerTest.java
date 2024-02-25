@@ -80,7 +80,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(1, taskManager.getEpics().size());
         assertEquals(1, taskManager.getSubtasks().size());
         assertEquals(0, taskManager.getTasks().size());
-        assertEquals(2, taskManager.getPrioritizedTasks().size());
+        assertEquals(1, taskManager.getPrioritizedTasks().size());
     }
 
     @Test
@@ -151,7 +151,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void getPrioritizedTasks(){
         ArrayList<AbstractTask> result = new ArrayList<>();
         result.add(task);
-        result.add(epic);
         result.add(subtask);
         assertEquals(result, taskManager.getPrioritizedTasks());
         Task task1 = new Task("TaskName", "TaskDescription",
@@ -170,7 +169,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 LocalDateTime.of(2030, 9,12, 10,0), Duration.ofHours(10));
         taskManager.update(newTask,0);
         ArrayList<AbstractTask> result = new ArrayList<>();
-        result.add(epic);
         result.add(subtask);
         result.add(newTask);
         assertEquals(result, taskManager.getPrioritizedTasks());
@@ -184,27 +182,27 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Task intersectingTask1 = new Task("startedBeforeEndedDuring", "id=4",
                 LocalDateTime.of(2023,2,6, 20,0), Duration.ofHours(24));
         taskManager.addObjective(intersectingTask1, TaskType.TASK);
-        assertEquals(4, taskManager.getPrioritizedTasks().size());
+        assertEquals(3, taskManager.getPrioritizedTasks().size());
 
         Task intersectingTask2 = new Task("startedDuringEndedAfter", "id=5",
                 LocalDateTime.of(2023,2,6, 22,0), Duration.ofHours(24));
         taskManager.addObjective(intersectingTask2, TaskType.TASK);
-        assertEquals(4, taskManager.getPrioritizedTasks().size());
+        assertEquals(3, taskManager.getPrioritizedTasks().size());
 
         Task intersectingTask3 = new Task("startedDuringEndedDuring", "id=6",
                 LocalDateTime.of(2023,2,6, 23,0), Duration.ofHours(1));
         taskManager.addObjective(intersectingTask3, TaskType.TASK);
-        assertEquals(4, taskManager.getPrioritizedTasks().size());
+        assertEquals(3, taskManager.getPrioritizedTasks().size());
 
         Task intersectingTask4 = new Task("startedBeforeEndedAfter", "id=7",
                 LocalDateTime.of(2023,2,6, 10,0), Duration.ofHours(48));
         taskManager.addObjective(intersectingTask4, TaskType.TASK);
-        assertEquals(4, taskManager.getPrioritizedTasks().size());
+        assertEquals(3, taskManager.getPrioritizedTasks().size());
 
         Task taskWithoutTime = new Task("withoutTime", "id=8");
         taskManager.addObjective(taskWithoutTime, TaskType.TASK);
-        assertEquals(5, taskManager.getPrioritizedTasks().size());
-        assertEquals(taskWithoutTime, taskManager.getPrioritizedTasks().get(4));
+        assertEquals(4, taskManager.getPrioritizedTasks().size());
+        assertEquals(taskWithoutTime, taskManager.getPrioritizedTasks().get(3));
     }
 
     @Test
@@ -217,7 +215,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.addObjective(subtask2, TaskType.SUBTASK);
         ArrayList<AbstractTask> result = new ArrayList<>();
         result.add(task);
-        result.add(epic);
         result.add(subtask1);
         result.add(subtask);
         result.add(subtask2);

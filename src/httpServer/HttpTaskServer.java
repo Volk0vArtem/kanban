@@ -17,8 +17,9 @@ public class HttpTaskServer {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
     public HttpTaskServer() {
-        this.manager = Managers.detDefaultFileBacked(new File("save1.csv"));
+        //this.manager = Managers.detDefault(new File("save1.csv"));
         //this.manager = FileBackedTasksManager.loadFromFile(new File("save1.csv"));
+        this.manager = Managers.getHttpManager("http://localhost:8078/");
         try {
             HttpServer httpServer = HttpServer.create();
             httpServer.bind(new InetSocketAddress(8080), 0);
