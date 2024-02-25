@@ -1,6 +1,7 @@
 package httpServer;
 
 import com.sun.net.httpserver.HttpServer;
+import exceptions.ManagerSaveException;
 import managers.FileBackedTasksManager;
 import managers.HttpTaskManager;
 import managers.Managers;
@@ -26,7 +27,7 @@ public class HttpTaskServer {
             httpServer.start();
             System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
         } catch (IOException e) {
-            System.out.println("При создании сервера произошла ошибка");
+            throw new ManagerSaveException("При создании сервера произошла ошибка");
         }
     }
 
@@ -40,7 +41,7 @@ public class HttpTaskServer {
             httpServer.start();
             System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
         } catch (IOException e) {
-            System.out.println("При создании сервера произошла ошибка");
+            throw new ManagerSaveException("При создании сервера произошла ошибка");
         }
     }
 
