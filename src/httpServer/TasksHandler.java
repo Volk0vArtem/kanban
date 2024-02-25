@@ -6,9 +6,12 @@ import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import managers.FileBackedTasksManager;
+import managers.HttpTaskManager;
 import tasks.*;
 import utils.AbstractTaskDeserializer;
 import utils.AbstractTaskSerializer;
+import utils.ManagerDeserializer;
+import utils.ManagerSerializer;
 
 import java.io.*;
 
@@ -20,9 +23,21 @@ import java.util.ArrayList;
 public class TasksHandler implements HttpHandler {
 
     FileBackedTasksManager manager;
+    Gson gson;
 
     public TasksHandler(FileBackedTasksManager manager) {
         this.manager = manager;
+        gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(Epic.class, AbstractTaskSerializer.getEpicSerializer())
+                .registerTypeAdapter(Task.class, AbstractTaskSerializer.getTaskSerializer())
+                .registerTypeAdapter(Subtask.class, AbstractTaskSerializer.getSubtaskSerializer())
+                .registerTypeAdapter(HttpTaskManager.class, new ManagerSerializer())
+                .registerTypeAdapter(Epic.class, AbstractTaskDeserializer.getEpicDeserializer())
+                .registerTypeAdapter(Task.class, AbstractTaskDeserializer.getTaskDeserializer())
+                .registerTypeAdapter(Subtask.class, AbstractTaskDeserializer.getSubtaskDeserializer())
+                .registerTypeAdapter(HttpTaskManager.class, new ManagerDeserializer())
+                .create();
     }
 
     @Override
@@ -90,7 +105,7 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void writeResponse(HttpExchange exchange, String responseString, int responseCode) throws IOException {
-        exchange.sendResponseHeaders(responseCode,0);
+        exchange.sendResponseHeaders(responseCode, 0);
         OutputStream os = exchange.getResponseBody();
         os.write(responseString.getBytes(StandardCharsets.UTF_8));
         os.close();
@@ -99,63 +114,63 @@ public class TasksHandler implements HttpHandler {
     private Endpoint getEndpoint(String requestPath, String requestMethod) {
         String[] pathParts = requestPath.split("/");
 
-        switch (requestMethod){
+        switch (requestMethod) {
             case "GET":
-                if (pathParts.length == 2){
+                if (pathParts.length == 2) {
                     return Endpoint.GET_PRIORITIZED_TASKS;
-                } else if (pathParts[2].equals("task")){
-                    if (pathParts.length == 3){
+                } else if (pathParts[2].equals("task")) {
+                    if (pathParts.length == 3) {
                         return Endpoint.GET_TASKS;
                     } else {
                         return Endpoint.GET_TASK;
                     }
-                } else if (pathParts[2].equals("subtask")){
-                    if (pathParts.length == 3){
+                } else if (pathParts[2].equals("subtask")) {
+                    if (pathParts.length == 3) {
                         return Endpoint.GET_SUBTASKS;
-                    } else if (pathParts.length == 4){
+                    } else if (pathParts.length == 4) {
                         return Endpoint.GET_SUBTASK;
-                    } else if (pathParts.length == 5 && pathParts[3].equals("epic")){
+                    } else if (pathParts.length == 5 && pathParts[3].equals("epic")) {
                         return Endpoint.GET_SUBTASKS_BY_EPIC;
                     }
 
-                } else if (pathParts[2].equals("epic")){
-                    if (pathParts.length == 3){
+                } else if (pathParts[2].equals("epic")) {
+                    if (pathParts.length == 3) {
                         return Endpoint.GET_EPICS;
                     } else {
                         return Endpoint.GET_EPIC;
                     }
 
-                } else if (pathParts[2].equals("history")){
+                } else if (pathParts[2].equals("history")) {
                     return Endpoint.GET_HISTORY;
                 }
                 break;
 
             case "POST":
-                if (pathParts[2].equals("task")){
+                if (pathParts[2].equals("task")) {
                     return Endpoint.POST_TASK;
-                } else if (pathParts[2].equals("subtask")){
+                } else if (pathParts[2].equals("subtask")) {
                     return Endpoint.POST_SUBTASK;
-                } else if (pathParts[2].equals("epic")){
+                } else if (pathParts[2].equals("epic")) {
                     return Endpoint.POST_EPIC;
                 }
                 break;
 
             case "DELETE":
-                if (pathParts.length == 3){
-                    if (pathParts[2].equals("task")){
+                if (pathParts.length == 3) {
+                    if (pathParts[2].equals("task")) {
                         System.out.println("t");
                         return Endpoint.DELETE_TASKS;
-                    } else if (pathParts[2].equals("subtask")){
+                    } else if (pathParts[2].equals("subtask")) {
                         System.out.println("s");
                         return Endpoint.DELETE_SUBTASKS;
-                    } else if (pathParts[2].equals("epic")){
+                    } else if (pathParts[2].equals("epic")) {
                         return Endpoint.DELETE_EPICS;
                     }
-                } else if (pathParts[2].equals("task")){
+                } else if (pathParts[2].equals("task")) {
                     return Endpoint.DELETE_TASK;
-                } else if (pathParts[2].equals("subtask")){
+                } else if (pathParts[2].equals("subtask")) {
                     return Endpoint.DELETE_SUBTASK;
-                } else if (pathParts[2].equals("epic")){
+                } else if (pathParts[2].equals("epic")) {
                     return Endpoint.DELETE_EPIC;
                 }
                 break;
@@ -165,181 +180,130 @@ public class TasksHandler implements HttpHandler {
 
     private void handleGetTask(HttpExchange exchange, String idString) throws IOException {
         int id = parseId(idString);
-        if (id == -1){
+        if (id == -1) {
             writeResponse(exchange, "Некорректный идентификатор задачи", 400);
             return;
         }
-        if (!manager.getTasks().containsKey(id)){
+        if (!manager.getTasks().containsKey(id)) {
             writeResponse(exchange, "Задача не найдена", 404);
             return;
         }
         AbstractTask task = manager.getById(id, TaskType.TASK);
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Task.class, AbstractTaskSerializer.getTaskSerializer())
-                .create();
         writeResponse(exchange, gson.toJson(task), 200);
     }
+
     private void handleGetSubtask(HttpExchange exchange, String idString) throws IOException {
         int id = parseId(idString);
-        if (id == -1){
+        if (id == -1) {
             writeResponse(exchange, "Некорректный идентификатор подзадачи", 400);
             return;
         }
-        if (!manager.getSubtasks().containsKey(id)){
+        if (!manager.getSubtasks().containsKey(id)) {
             writeResponse(exchange, "Подзадача не найдена", 404);
             return;
         }
         AbstractTask task = manager.getById(id, TaskType.SUBTASK);
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Subtask.class, AbstractTaskSerializer.getSubtaskSerializer())
-                .create();
         writeResponse(exchange, gson.toJson(task), 200);
     }
+
     private void handleGetEpic(HttpExchange exchange, String idString) throws IOException {
         int id = parseId(idString);
-        if (id == -1){
+        if (id == -1) {
             writeResponse(exchange, "Некорректный идентификатор эпика", 400);
             return;
         }
-        if (!manager.getEpics().containsKey(id)){
+        if (!manager.getEpics().containsKey(id)) {
             writeResponse(exchange, "Эпик не найден", 404);
             return;
         }
         AbstractTask task = manager.getById(id, TaskType.EPIC);
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Epic.class, AbstractTaskSerializer.getEpicSerializer())
-                .create();
         writeResponse(exchange, gson.toJson(task), 200);
     }
 
     private void handleGetTasks(HttpExchange exchange) throws IOException {
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Task.class, AbstractTaskSerializer.getTaskSerializer())
-                .create();
         writeResponse(exchange, gson.toJson(manager.getTasks()), 200);
     }
 
     private void handleGetSubtasks(HttpExchange exchange) throws IOException {
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Subtask.class, AbstractTaskSerializer.getSubtaskSerializer())
-                .create();
         writeResponse(exchange, gson.toJson(manager.getSubtasks()), 200);
     }
 
     private void handleGetEpics(HttpExchange exchange) throws IOException {
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Epic.class, AbstractTaskSerializer.getEpicSerializer())
-                .create();
         writeResponse(exchange, gson.toJson(manager.getEpics()), 200);
     }
 
     private void handleGetHistory(HttpExchange exchange) throws IOException {
-//        Gson gson = new Gson();
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Epic.class, AbstractTaskSerializer.getEpicSerializer())
-                .registerTypeAdapter(Task.class, AbstractTaskSerializer.getTaskSerializer())
-                .registerTypeAdapter(Subtask.class, AbstractTaskSerializer.getSubtaskSerializer())
-                .create();
         writeResponse(exchange, gson.toJson(manager.getHistory()), 200);
     }
 
     private void handleGetPrioritized(HttpExchange exchange) throws IOException {
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Epic.class, AbstractTaskSerializer.getEpicSerializer())
-                .registerTypeAdapter(Task.class, AbstractTaskSerializer.getTaskSerializer())
-                .registerTypeAdapter(Subtask.class, AbstractTaskSerializer.getSubtaskSerializer())
-                .create();
         writeResponse(exchange, gson.toJson(manager.getPrioritizedTasks()), 200);
     }
 
     private void handleGetSubtasksByEpic(HttpExchange exchange, String idString) throws IOException {
         int id = parseId(idString);
-        if (id == -1){
+        if (id == -1) {
             writeResponse(exchange, "Некорректный идентификатор эпика", 400);
         }
-        if (!manager.getEpics().containsKey(id)){
+        if (!manager.getEpics().containsKey(id)) {
             writeResponse(exchange, "Эпик не найден", 404);
             return;
         }
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Subtask.class, AbstractTaskSerializer.getSubtaskSerializer())
-                .create();
         ArrayList<Subtask> list = manager.getSubtasksByEpic(id);
         System.out.println(list);
         writeResponse(exchange, gson.toJson(manager.getSubtasksByEpic(id)), 200);
     }
 
     private void handlePostTask(HttpExchange exchange) throws IOException {
-        Task task = null;
+        Task task;
         try {
-            Gson gson = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .registerTypeAdapter(Task.class, AbstractTaskDeserializer.getTaskDeserializer())
-                    .create();
             String json = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
             task = gson.fromJson(json, Task.class);
-        } catch (JsonSyntaxException e){
+        } catch (JsonSyntaxException e) {
             writeResponse(exchange, "Получен некорректный JSON", 400);
             return;
         }
-        if (task.getName() == null || task.getDescription() == null){
+        if (task.getName() == null || task.getDescription() == null) {
             writeResponse(exchange, "Название и описание задачи не могут быть пустыми", 400);
             return;
         }
         manager.addObjective(task, TaskType.TASK);
-        if (!manager.getTasks().containsKey(task.getId())){
+        if (!manager.getTasks().containsKey(task.getId())) {
             writeResponse(exchange, "Задача пересекается по времени с другой задачей", 400);
         }
         writeResponse(exchange, "Задача добавлена", 201);
     }
 
     private void handlePostSubtask(HttpExchange exchange) throws IOException {
-        Subtask subtask = null;
+        Subtask subtask;
         try {
-            Gson gson = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .registerTypeAdapter(Subtask.class, AbstractTaskDeserializer.getSubtaskDeserializer())
-                    .create();
             String json = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
             subtask = gson.fromJson(json, Subtask.class);
-        } catch (JsonSyntaxException e){
+        } catch (JsonSyntaxException e) {
             writeResponse(exchange, "Получен некорректный JSON", 400);
             return;
         }
-        if (subtask.getName() == null || subtask.getDescription() == null){
+        if (subtask.getName() == null || subtask.getDescription() == null) {
             writeResponse(exchange, "Название и описание подзадачи не могут быть пустыми", 400);
             return;
         }
         manager.addObjective(subtask, TaskType.SUBTASK);
-        if (!manager.getSubtasks().containsKey(subtask.getId())){
+        if (!manager.getSubtasks().containsKey(subtask.getId())) {
             writeResponse(exchange, "Задача пересекается по времени с другой задачей", 400);
         }
         writeResponse(exchange, "Подзадача добавлена", 201);
     }
 
     private void handlePostEpic(HttpExchange exchange) throws IOException {
-        Epic epic = null;
+        Epic epic;
         try {
-            Gson gson = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .registerTypeAdapter(Epic.class, AbstractTaskDeserializer.getEpicDeserializer())
-                    .create();
             String json = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
             epic = gson.fromJson(json, Epic.class);
-        } catch (JsonSyntaxException e){
+        } catch (JsonSyntaxException e) {
             writeResponse(exchange, "Получен некорректный JSON", 400);
             return;
         }
-        if (epic.getName() == null || epic.getDescription() == null){
+        if (epic.getName() == null || epic.getDescription() == null) {
             writeResponse(exchange, "Название и описание эпика не могут быть пустыми", 400);
             return;
         }
@@ -364,11 +328,11 @@ public class TasksHandler implements HttpHandler {
 
     private void handleDeleteTask(HttpExchange exchange, String idString) throws IOException {
         int id = parseId(idString);
-        if (id == -1){
+        if (id == -1) {
             writeResponse(exchange, "Некорректный идентификатор задачи", 400);
             return;
         }
-        if (!manager.getTasks().containsKey(id)){
+        if (!manager.getTasks().containsKey(id)) {
             writeResponse(exchange, "Задача не найдена", 404);
         }
         manager.deleteById(id, TaskType.TASK);
@@ -377,11 +341,11 @@ public class TasksHandler implements HttpHandler {
 
     private void handleDeleteSubtask(HttpExchange exchange, String idString) throws IOException {
         int id = parseId(idString);
-        if (id == -1){
+        if (id == -1) {
             writeResponse(exchange, "Некорректный идентификатор подзадачи", 400);
             return;
         }
-        if (!manager.getSubtasks().containsKey(id)){
+        if (!manager.getSubtasks().containsKey(id)) {
             writeResponse(exchange, "Подзадача не найдена", 404);
         }
         manager.deleteById(id, TaskType.SUBTASK);
@@ -390,11 +354,11 @@ public class TasksHandler implements HttpHandler {
 
     private void handleDeleteEpic(HttpExchange exchange, String idString) throws IOException {
         int id = parseId(idString);
-        if (id == -1){
+        if (id == -1) {
             writeResponse(exchange, "Некорректный идентификатор эпика", 400);
             return;
         }
-        if (!manager.getEpics().containsKey(id)){
+        if (!manager.getEpics().containsKey(id)) {
             writeResponse(exchange, "Эпик не найден", 404);
         }
 
@@ -402,14 +366,14 @@ public class TasksHandler implements HttpHandler {
         writeResponse(exchange, "Эпик id=" + id + " удалён", 200);
     }
 
-    private int parseId(String idString){
+    private int parseId(String idString) {
         int id = -1;
-        if (!idString.split("=")[0].equals("?id")){
+        if (!idString.split("=")[0].equals("?id")) {
             return -1;
         }
         try {
             id = Integer.parseInt(idString.split("=")[1]);
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return -1;
         }
         return id;

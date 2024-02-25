@@ -9,10 +9,10 @@ import java.net.http.HttpResponse;
 public class KVTaskClient {
 
     String url;
-    private String apiToken;
+    private final String apiToken;
     HttpClient client;
 
-    public String getUrl(){
+    public String getUrl() {
         return url;
     }
 
@@ -24,7 +24,7 @@ public class KVTaskClient {
                 .GET()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        this.apiToken = response.body().toString();
+        this.apiToken = response.body();
     }
 
     public void put(String key, String json) throws IOException, InterruptedException {

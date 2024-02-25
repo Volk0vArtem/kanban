@@ -8,41 +8,40 @@ import utils.CSVFormat;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private File file;
 
-    public FileBackedTasksManager(){
+    public FileBackedTasksManager() {
         super();
     }
+
     public FileBackedTasksManager(File file) {
         super();
         this.file = file;
     }
 
-    protected void save(){
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(file))){
+    protected void save() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
 
             bw.write("id,type,name,status,description,startTime,endTime,duration,epic");
             bw.newLine();
 
-            for (Task task : tasks.values()){
+            for (Task task : tasks.values()) {
                 String csv = task.toCSV();
                 bw.write(csv);
                 bw.newLine();
             }
 
-            for (Epic epic : epics.values()){
+            for (Epic epic : epics.values()) {
                 String csv = epic.toCSV();
                 bw.write(csv);
                 bw.newLine();
             }
 
-            for (Subtask subtask : subtasks.values()){
+            for (Subtask subtask : subtasks.values()) {
                 String csv = subtask.toCSV();
                 bw.write(csv);
                 bw.newLine();
@@ -53,31 +52,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             bw.newLine();
             bw.write(CSVFormat.prioritizedTasksToCsv(this));
 
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new ManagerSaveException("Can't save to file: " + file.getName());
         }
     }
 
-    public static FileBackedTasksManager loadFromFile(File file){
+    public static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager manager = new FileBackedTasksManager(file);
-        try{
+        try {
             String csv = Files.readString(file.toPath());
             String[] lines = csv.split(System.lineSeparator());
             int maxId = 0;
 
-            for (int i = 1; i < lines.length; i++){
-                if (lines[i].isEmpty()){
-                    List<Integer> historyCsv = CSVFormat.idListFromString(lines[i+1]);
+            for (int i = 1; i < lines.length; i++) {
+                if (lines[i].isEmpty()) {
+                    List<Integer> historyCsv = CSVFormat.idListFromString(lines[i + 1]);
                     HistoryManager historyManager = manager.getHistoryManager();
-                    for (Integer id : historyCsv){
+                    for (Integer id : historyCsv) {
                         historyManager.addToHistory(manager.getByIdWithoutAddingToHistory(id));
                     }
 
-                    List<Integer> prioritizedCsv = CSVFormat.idListFromString(lines[i+2]);
-                    for (int j = prioritizedCsv.size()-1; j >= 0; j--) {
+                    List<Integer> prioritizedCsv = CSVFormat.idListFromString(lines[i + 2]);
+                    for (int j = prioritizedCsv.size() - 1; j >= 0; j--) {
                         try {
                             manager.addToPrioritizedTasksList(manager.getByIdWithoutAddingToHistory(prioritizedCsv.get(j)));
-                        } catch (TimeIntersectException e){
+                        } catch (TimeIntersectException e) {
                             System.out.println(e.getMessage());
                         }
                     }
@@ -85,13 +84,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
 
                 String[] scvData = lines[i].split(",");
-                if (Integer.parseInt(scvData[0]) >= maxId){
+                if (Integer.parseInt(scvData[0]) >= maxId) {
                     maxId = Integer.parseInt(scvData[0]) + 1;
                     AbstractTask.setCount(maxId);
                 }
                 manager.objectiveFromCsv(scvData);
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new ManagerLoadException("Can't load from file: " + file.getName());
         }
         return manager;
@@ -135,14 +134,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     }
 
-    private void objectiveFromCsv(String[] values){
-        switch (TaskType.valueOf(values[1])){
-            case TASK: tasks.put(Integer.valueOf(values[0]), CSVFormat.taskFromCsv(values));
-            break;
-            case EPIC: epics.put(Integer.valueOf(values[0]), CSVFormat.epicFromCsv(values));
-            break;
+    private void objectiveFromCsv(String[] values) {
+        switch (TaskType.valueOf(values[1])) {
+            case TASK:
+                tasks.put(Integer.valueOf(values[0]), CSVFormat.taskFromCsv(values));
+                break;
+            case EPIC:
+                epics.put(Integer.valueOf(values[0]), CSVFormat.epicFromCsv(values));
+                break;
             case SUBTASK: {
-                Subtask subtask = CSVFormat.subtaskFromCsv(values,epics);
+                Subtask subtask = CSVFormat.subtaskFromCsv(values, epics);
                 subtasks.put(Integer.valueOf(values[0]), subtask);
                 subtask.getEpic().addSubtask(subtask);
             }

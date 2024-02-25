@@ -4,26 +4,14 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import managers.HttpTaskManager;
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
-import tasks.TaskType;
-import utils.AbstractTaskSerializer;
-import utils.ManagerSerializer;
 
-/**
- * Постман: https://www.getpostman.com/collections/a83b61d9e1c81c10575c
- */
+
 public class KVServer {
     public static final int PORT = 8078;
     private final String apiToken;
@@ -54,7 +42,7 @@ public class KVServer {
                     h.sendResponseHeaders(400, 0);
                     return;
                 }
-                if(!data.containsKey(key)){
+                if (!data.containsKey(key)) {
                     System.out.println("Key не найден");
                     h.sendResponseHeaders(404, 0);
                     return;
@@ -126,6 +114,10 @@ public class KVServer {
         server.start();
     }
 
+    public void stop() {
+        server.stop(0);
+    }
+
     private String generateApiToken() {
         return "" + System.currentTimeMillis();
     }
@@ -145,48 +137,6 @@ public class KVServer {
         h.sendResponseHeaders(200, resp.length);
         h.getResponseBody().write(resp);
     }
-
-
-
-
-
-    public static void main(String[] args) throws IOException, InterruptedException {
-
-        Task task1 = new Task("0", "TaskDescription",
-                LocalDateTime.of(2000,01,01,15,00), Duration.ofHours(1));
-        Task task2 = new Task("0", "TaskDescription",
-                LocalDateTime.of(2222,01,01,15,00), Duration.ofHours(1));
-        Epic epic1 = new Epic("1", "EpicDescription");
-
-        Subtask subtask1 = new Subtask("subtask1", "2", epic1,
-                LocalDateTime.of(2002,01,01,15,00), Duration.ofHours(1));
-        Subtask subtask2 = new Subtask("subtask2", "3", epic1,
-                LocalDateTime.of(2002,1,1,18,0), Duration.ofHours(3));
-
-        KVServer kvServer = new KVServer();
-        kvServer.start();
-        HttpTaskManager manager = new HttpTaskManager("http://localhost:8078/");
-
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Epic.class, AbstractTaskSerializer.getEpicSerializer())
-                .registerTypeAdapter(Task.class, AbstractTaskSerializer.getTaskSerializer())
-                .registerTypeAdapter(Subtask.class, AbstractTaskSerializer.getSubtaskSerializer())
-                .registerTypeAdapter(HttpTaskManager.class, new ManagerSerializer())
-                .create();
-
-
-        manager.addObjective(task1, TaskType.TASK);
-        manager.addObjective(task2, TaskType.TASK);
-
-        manager.getById(0,TaskType.TASK);
-        System.out.println(gson.toJson(manager));
-
-
-        HttpTaskManager manager1 = manager.load("http://localhost:8078/");
-        System.out.println(gson.toJson(manager1));
-    }
-
 }
 
 

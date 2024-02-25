@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class InMemoryHistoryManager implements HistoryManager{
+public class InMemoryHistoryManager implements HistoryManager {
     private CustomLinkedList history;
 
     public InMemoryHistoryManager() {
@@ -30,21 +30,21 @@ public class InMemoryHistoryManager implements HistoryManager{
     }
 }
 
-class CustomLinkedList{
+class CustomLinkedList {
     private Node<AbstractTask> head;
     private Node<AbstractTask> tail;
     private int size = 0;
-    private HashMap<Integer,Node> nodeMap;
+    private HashMap<Integer, Node> nodeMap;
 
-    public CustomLinkedList(){
+    public CustomLinkedList() {
         nodeMap = new HashMap<>();
     }
 
-    private void linkLast(AbstractTask data){
+    private void linkLast(AbstractTask data) {
         Node<AbstractTask> last = tail;
         Node<AbstractTask> newNode = new Node<>(tail, data, null);
         tail = newNode;
-        if (last == null){
+        if (last == null) {
             head = newNode;
         } else {
             last.next = newNode;
@@ -52,10 +52,10 @@ class CustomLinkedList{
         size++;
     }
 
-    public List<AbstractTask> getTasks(){
+    public List<AbstractTask> getTasks() {
         ArrayList<AbstractTask> taskList = new ArrayList<>();
         Node<AbstractTask> currentNode = tail;
-        while (currentNode != null){
+        while (currentNode != null) {
             AbstractTask task = currentNode.data;
             taskList.add(task);
             currentNode = currentNode.prev;
@@ -63,16 +63,16 @@ class CustomLinkedList{
         return taskList;
     }
 
-    public void removeNode(Node<AbstractTask> node){
+    public void removeNode(Node<AbstractTask> node) {
         Node<AbstractTask> next = node.next;
         Node<AbstractTask> prev = node.prev;
-        if (next == null && prev == null){
+        if (next == null && prev == null) {
             head = null;
             tail = null;
-        }else if (next == null){
+        } else if (next == null) {
             prev.next = null;
             tail = prev;
-        } else if (prev == null){
+        } else if (prev == null) {
             next.prev = null;
             head = next;
         } else {
@@ -83,14 +83,14 @@ class CustomLinkedList{
         size--;
     }
 
-    public void remove(int id){
+    public void remove(int id) {
         if (nodeMap.containsKey(id)) {
             removeNode(nodeMap.get(id));
         }
     }
 
-    public void add(AbstractTask task){
-        if (nodeMap.containsKey(task.getId())){
+    public void add(AbstractTask task) {
+        if (nodeMap.containsKey(task.getId())) {
             removeNode(nodeMap.get(task.getId()));
         }
         linkLast(task);

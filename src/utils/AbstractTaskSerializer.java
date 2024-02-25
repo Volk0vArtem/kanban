@@ -74,9 +74,11 @@ class TaskSerializer implements JsonSerializer<Task> {
                 result.addProperty("name", epic.getName());
                 result.addProperty("status", epic.getStatus().toString());
                 result.addProperty("description", epic.getDescription());
-                result.addProperty("startTime", epic.getStartTime().format(formatter));
-                result.addProperty("endTime", epic.getEndTime().format(formatter));
-                result.addProperty("duration", epic.getDuration().toString());
+                if (epic.getStartTime() != null) {
+                    result.addProperty("startTime", epic.getStartTime().format(formatter));
+                    result.addProperty("endTime", epic.getEndTime().format(formatter));
+                    result.addProperty("duration", epic.getDuration().toString());
+                }
 
                 return result;
             }

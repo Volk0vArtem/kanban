@@ -17,7 +17,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     KVTaskClient client;
 
-    public void setClient(KVTaskClient client){
+    public void setClient(KVTaskClient client) {
         this.client = client;
     }
 
@@ -30,12 +30,12 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
     }
 
-    public String getUrl(){
+    public String getUrl() {
         return client.getUrl();
     }
 
     @Override
-    protected void save(){
+    protected void save() {
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(Epic.class, AbstractTaskSerializer.getEpicSerializer())
@@ -46,12 +46,12 @@ public class HttpTaskManager extends FileBackedTasksManager {
         String json = gson.toJson(this);
         try {
             client.put("save", json);
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Во время сохранения возникла ошибка");
         }
     }
 
-    public static HttpTaskManager load(String url){
+    public static HttpTaskManager load(String url) {
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(Epic.class, AbstractTaskDeserializer.getEpicDeserializer())
@@ -65,7 +65,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             HttpTaskManager manager = gson.fromJson(json, HttpTaskManager.class);
             manager.setClient(client1);
             return manager;
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Во время загрузки возникла ошибка");
             return null;
         }
